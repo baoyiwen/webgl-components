@@ -1,0 +1,1 @@
+import '@testing-library/jest-dom'; // 引入 jest-dom 扩展 matchers
