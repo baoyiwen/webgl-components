@@ -15,11 +15,11 @@ export const testCounterSlice = createSlice({
     decrementByAmount: (state, action: PayloadAction<number>) => {
       state.count -= action.payload; // 使用PayloadAction来指定action.payload的类型
     },
-    increment: state => {
-      state.count += 1;
+    increment: (state, action: PayloadAction<number>) => {
+      state.count += action.payload;
     },
-    decrement: state => {
-      state.count - +1;
+    decrement: (state, action: PayloadAction<number>) => {
+      state.count -= action.payload;
     },
   },
 });
