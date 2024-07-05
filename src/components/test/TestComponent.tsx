@@ -8,6 +8,7 @@ import {
   decrementByAmount,
 } from '../../features';
 import classname from 'classnames';
+import { Button, Card } from 'antd';
 
 interface TestProps {
   count: number;
@@ -32,31 +33,31 @@ export class TestComponent extends Component<TestProps> {
     } = this.props; // 解构state和actions
     return (
       <div>
-        <h1>Counter: {count}</h1>
-        <button
-          className={classname(['button', 'increment'])}
+        <Card>Counter: {count}</Card>
+        <Button
+          className={classname(['Button', 'increment'])}
           onClick={increment?.bind(this, 1)}
         >
           increment
-        </button>
-        <button
-          className={classname(['button', 'decrement'])}
+        </Button>
+        <Button
+          className={classname(['Button', 'decrement'])}
           onClick={decrement?.bind(this, 1)}
         >
           decrement
-        </button>
-        <button
-          className={classname(['button', 'incrementByAmount'])}
+        </Button>
+        <Button
+          className={classname(['Button', 'incrementByAmount'])}
           onClick={incrementByAmount?.bind(this, 5)}
         >
           incrementByAmount
-        </button>
-        <button
-          className={classname(['button', 'decrementByAmount'])}
+        </Button>
+        <Button
+          className={classname(['Button', 'decrementByAmount'])}
           onClick={decrementByAmount?.bind(this, 5)}
         >
           decrementByAmount
-        </button>
+        </Button>
       </div>
     );
   }

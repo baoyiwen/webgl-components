@@ -1,0 +1,34 @@
+.root-layout-LayoutComponent {
+  --layout-width: 100%;
+  --layout-height: 100%;
+  --layout-background-color: inherit;
+  --layout-color: inherit;
+  --layout-transition-time: 0.3s;
+
+  background-color: var(--layout-background-color);
+  width: var(--layout-width);
+  height: var(--layout-height);
+  color: var(--layout-color);
+
+  * {
+    transition: all var(--layout-transition-time);
+  }
+
+  & > .root-layout {
+    height: 100%;
+    & > .root-header {
+      & > .layout-logo {
+      }
+    }
+
+    & > .root-content {
+      padding: 0 10px;
+      & > .site-layout-content {
+      }
+    }
+
+    & > .root-footer {
+      text-align: center;
+    }
+  }
+}
