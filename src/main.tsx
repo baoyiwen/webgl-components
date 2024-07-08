@@ -1,17 +1,46 @@
-import { StrictMode } from 'react';
+import React, { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import store from './store';
 import './index.css';
 import { ConfigProvider } from 'antd';
 import { global_theme } from './theme';
+import { BrowserRouter } from 'react-router-dom';
+import { setMenuItems } from './features';
+import { loadPage } from './utils/loadPage';
+import {
+  generateMenuDataByStore,
+  setRoutesByStore,
+  settingDefaultPagePath,
+} from './utils/generateMenuTree';
+
+// // 自动生成菜单树
+
+const Root: React.FC = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const loadAndSetPages = async () => {
+      const pages = await loadPage();
+      // 生成菜单数据并存入 Redux Store
+      generateMenuDataByStore(pages);
+      // 设置默认页面路径
+      settingDefaultPagePath(pages);
+      // 设置路由数据
+      setRoutesByStore(pages);
+    };
+
+    loadAndSetPages();
+  }, [dispatch]);
+
+  return <App />;
+};
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <ConfigProvider theme={global_theme}>
-        <App />
+        <Root />
       </ConfigProvider>
     </Provider>
   </StrictMode>,

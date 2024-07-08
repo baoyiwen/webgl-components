@@ -1,4 +1,4 @@
-import { Component, ReactNode } from 'react';
+import { Component, ReactNode, HTMLAttributes } from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../../store';
 import {
@@ -10,7 +10,7 @@ import {
 import classname from 'classnames';
 import { Button, Card } from 'antd';
 
-interface TestProps {
+interface TestProps extends HTMLAttributes<any> {
   count: number;
   increment: (amount: number) => void;
   decrement: (amount: number) => void;
@@ -32,7 +32,7 @@ export class TestComponent extends Component<TestProps> {
       decrementByAmount,
     } = this.props; // 解构state和actions
     return (
-      <div>
+      <div {...this.props}>
         <Card>Counter: {count}</Card>
         <Button
           className={classname(['Button', 'increment'])}

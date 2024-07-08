@@ -1,8 +1,9 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { testCounterReducer } from '../features';
+import { testCounterReducer, MenuReducer } from '../features';
 
 const rootReducer = combineReducers({
   testCounter: testCounterReducer,
+  menuContent: MenuReducer
 });
 
 const store = configureStore({

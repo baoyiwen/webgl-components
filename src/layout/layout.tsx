@@ -1,14 +1,28 @@
 import { Component, ReactNode } from 'react';
 import classname from 'classnames';
 import './layout.less';
-import { Route, Routes } from 'react-router-dom';
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  BrowserRouter as Router,
+} from 'react-router-dom';
 import { Layout, Menu } from 'antd';
-import { themeStyle, defaultActiveMenu } from '../settings';
+import { themeStyle, defaultActiveMenu, baseSetting } from '../settings';
 import { Home } from '../page';
+import { CurrentData, MenuItem, setCurrentData, RouteData } from '../features';
+import { RootState } from '../store';
+import { connect } from 'react-redux';
 
-export type LayoutProps = {};
+export interface LayoutProps {
+  menuItems: MenuItem[];
+  currentData: CurrentData;
+  routes: RouteData[];
+  setCurrentData: (data: CurrentData) => void;
+}
 
-export class LayoutComponent extends Component {
+export class LayoutComponent extends Component<LayoutProps> {
   constructor(props: LayoutProps) {
     super(props);
   }
@@ -17,44 +31,86 @@ export class LayoutComponent extends Component {
     return (
       <div className={classname(['root-layout-LayoutComponent'])}>
         <Layout className={classname(['root-layout'])}>
-          {this.renderHeader()}
-          {this.renderContent()}
-          {this.renderFooter()}
+          {this.renderSlide()}
+          <Layout className="root-content-layout">
+            {this.renderHeader()}
+            {this.renderContent()}
+            {this.renderFooter()}
+          </Layout>
         </Layout>
       </div>
     );
   }
 
-  renderHeader(): ReactNode {
-    const { Header } = Layout;
-    const menuItems = [
-      {
-        key: 'test-01',
-        label: '测试',
-        path: '/',
-      },
-    ];
+  renderSlide() {
+    const { menuItems } = this.props;
+    const { Sider } = Layout;
+    const { Item } = Menu;
     return (
-      <Header className={classname(['root-header'])}>
-        <div className="layout-logo"></div>
+      <Sider collapsible className={classname(['root-slide'])}>
+        <div className={classname(['root-slide-logo'])}></div>
         <Menu
+          className={classname(['root-slide-menu'])}
           theme={themeStyle.menuTheme}
-          mode={themeStyle.menuMode}
+          mode={themeStyle.rightMenuModel}
           defaultSelectedKeys={defaultActiveMenu}
           items={menuItems}
-        ></Menu>
+        >
+          {menuItems.map(item => (
+            <Item key={item.key} className={classname(['slide-menu-item'])}>
+              <Link
+                to={item.path}
+                onClick={this.LinkClick.bind(this, item)}
+                className={classname(['slide-menu-link'])}
+              >
+                {item.label}
+              </Link>
+            </Item>
+          ))}
+        </Menu>
+      </Sider>
+    );
+  }
+
+  private LinkClick(data: MenuItem) {
+    const { setCurrentData } = this.props;
+    setCurrentData({
+      currentKey: data.key,
+      currentPath: data.path,
+      currentMenu: data,
+    });
+  }
+
+  renderHeader(): ReactNode {
+    const { Header } = Layout;
+    return (
+      <Header className={classname(['root-header'])}>
+        <div className={classname(['header-warp'])}>
+          {baseSetting.projectTitle}
+        </div>
       </Header>
     );
   }
 
   renderContent() {
+    const { routes, currentData } = this.props;
     const { Content } = Layout;
 
     return (
       <Content className={classname(['root-content'])}>
         <div className={classname(['site-layout-content'])}>
           <Routes>
-            <Route path="/" element={<Home></Home>}></Route>
+            {routes.map(route => (
+              <Route
+                key={route.key}
+                path={route.path}
+                element={<route.component />}
+              ></Route>
+            ))}
+            <Route
+              path="*"
+              element={<Navigate to={currentData.currentPath} replace />}
+            ></Route>
           </Routes>
         </div>
       </Content>
@@ -66,7 +122,7 @@ export class LayoutComponent extends Component {
 
     return (
       <Footer className={classname(['root-footer'])}>
-        My Three.js Library ©2024
+        {baseSetting.projectCopyright}
       </Footer>
     );
   }
@@ -83,3 +139,18 @@ export class LayoutComponent extends Component {
 
   //   componentWillUnmount(): void {}
 }
+
+const mapStateToProps = (state: RootState) => ({
+  menuItems: state.menuContent.items,
+  currentData: state.menuContent.currentData,
+  routes: state.menuContent.routes,
+});
+
+const mapDispatchToProps = {
+  setCurrentData,
+};
+
+export const LayoutComponentByStore = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(LayoutComponent);

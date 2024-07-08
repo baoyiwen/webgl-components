@@ -1,18 +1,17 @@
-import { Component, ReactNode, ComponentProps } from 'react';
+import { Component, CSSProperties, HTMLAttributes } from 'react';
+import { PageMetaType } from '../../types';
 
-export type PageMeta = {
-  label: string;
-  path: string;
-  children?: PageMeta[];
-  default?: boolean;
-  content?: ReactNode;
+export type MetaComponentProps = HTMLAttributes<any> & {
+  className?: string;
+  style?: CSSProperties;
 };
 
-export type MetaComponentProps = {};
-
-export class MetaComponent extends Component {
-  meta!: PageMeta;
-  constructor(props: MetaComponentProps) {
+export class MetaComponent<P = {}, S = {}> extends Component<
+  P & MetaComponentProps,
+  S
+> {
+  meta!: PageMetaType;
+  constructor(props: P & MetaComponentProps) {
     super(props);
   }
 }

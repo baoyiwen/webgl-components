@@ -13,22 +13,50 @@
   * {
     transition: all var(--layout-transition-time);
   }
-
-  & > .root-layout {
+  .root-layout {
+    width: 100%;
     height: 100%;
-    & > .root-header {
-      & > .layout-logo {
+    // slide
+    .root-slide {
+      .ant-layout-sider-trigger {
+        bottom: auto !important;
+      }
+
+      .root-slide-logo {
+      }
+
+      .root-slide-menu {
+        .slide-menu-item {
+        }
+
+        .slide-menu-link {
+        }
       }
     }
 
-    & > .root-content {
-      padding: 0 10px;
-      & > .site-layout-content {
+    // 内容标签类名
+    .root-content-layout {
+      .root-header {
+        padding: 0;
+        .header-warp {
+          color: #fff;
+          text-align: center;
+          font-size: 1.5rem;
+        }
       }
-    }
 
-    & > .root-footer {
-      text-align: center;
+      // 内容
+      .root-content {
+        margin: 24px 16px 0;
+        & > .site-layout-content {
+          padding: 24px;
+          min-height: 360px;
+        }
+      }
+
+      .root-footer {
+        text-align: center;
+      }
     }
   }
 }
