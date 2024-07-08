@@ -63,7 +63,7 @@ export const setRoutesByStore = (pages: PageMeta[]) => {
   const routes = pages.map(page => ({
     key: page.meta.path,
     path: page.meta.path,
-    component: page.component,
+    componentPath: page.componentPath,
   }));
 
   store.dispatch(setRoutes(routes));

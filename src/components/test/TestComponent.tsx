@@ -19,9 +19,9 @@ interface TestProps extends HTMLAttributes<any> {
 }
 
 export class TestComponent extends Component<TestProps> {
-  constructor(props: TestProps) {
-    super(props);
-  }
+  // constructor(props: TestProps) {
+  //   super(props);
+  // }
 
   render(): ReactNode {
     const {

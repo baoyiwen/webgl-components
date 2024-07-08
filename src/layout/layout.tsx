@@ -1,4 +1,4 @@
-import { Component, ReactNode } from 'react';
+import { Component, ReactNode, Suspense, lazy } from 'react';
 import classname from 'classnames';
 import './layout.less';
 import {
@@ -14,6 +14,7 @@ import { Home } from '../page';
 import { CurrentData, MenuItem, setCurrentData, RouteData } from '../features';
 import { RootState } from '../store';
 import { connect } from 'react-redux';
+import { ItemType, MenuItemType } from 'antd/es/menu/interface';
 
 export interface LayoutProps {
   menuItems: MenuItem[];
@@ -42,10 +43,24 @@ export class LayoutComponent extends Component<LayoutProps> {
     );
   }
 
+  private generateMenuItems(items: MenuItem[]): any[] {
+    const { setCurrentData } = this.props;
+    return items.map(item => ({
+      key: item.key,
+      label: (
+        <Link to={item.path} onClick={this.LinkClick.bind(this, item)}>
+          {item.label}
+        </Link>
+      ),
+      children: item.children
+        ? (this.generateMenuItems(item.children) as any[])
+        : undefined,
+    }));
+  }
+
   renderSlide() {
     const { menuItems } = this.props;
     const { Sider } = Layout;
-    const { Item } = Menu;
     return (
       <Sider collapsible className={classname(['root-slide'])}>
         <div className={classname(['root-slide-logo'])}></div>
@@ -54,20 +69,8 @@ export class LayoutComponent extends Component<LayoutProps> {
           theme={themeStyle.menuTheme}
           mode={themeStyle.rightMenuModel}
           defaultSelectedKeys={defaultActiveMenu}
-          items={menuItems}
-        >
-          {menuItems.map(item => (
-            <Item key={item.key} className={classname(['slide-menu-item'])}>
-              <Link
-                to={item.path}
-                onClick={this.LinkClick.bind(this, item)}
-                className={classname(['slide-menu-link'])}
-              >
-                {item.label}
-              </Link>
-            </Item>
-          ))}
-        </Menu>
+          items={this.generateMenuItems(menuItems)}
+        ></Menu>
       </Sider>
     );
   }
@@ -95,23 +98,28 @@ export class LayoutComponent extends Component<LayoutProps> {
   renderContent() {
     const { routes, currentData } = this.props;
     const { Content } = Layout;
-
+    const loadComponent = (componentPath: string) => {
+      const Component = lazy(() => import(`${componentPath}`));
+      return <Component></Component>;
+    };
     return (
       <Content className={classname(['root-content'])}>
         <div className={classname(['site-layout-content'])}>
-          <Routes>
-            {routes.map(route => (
+          <Suspense fallback={<div>Loading......</div>}>
+            <Routes>
+              {routes.map(route => (
+                <Route
+                  key={route.key}
+                  path={route.path}
+                  element={loadComponent(route.componentPath)}
+                ></Route>
+              ))}
               <Route
-                key={route.key}
-                path={route.path}
-                element={<route.component />}
+                path="*"
+                element={<Navigate to={currentData.currentPath} replace />}
               ></Route>
-            ))}
-            <Route
-              path="*"
-              element={<Navigate to={currentData.currentPath} replace />}
-            ></Route>
-          </Routes>
+            </Routes>
+          </Suspense>
         </div>
       </Content>
     );

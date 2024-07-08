@@ -13,7 +13,7 @@ export type MenuItem = {
 export type RouteData = {
   key: string;
   path: string;
-  component: ComponentType;
+  componentPath: string; // 储存组件的路径
 };
 
 export type MenuState = {

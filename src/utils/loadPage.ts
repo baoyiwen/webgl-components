@@ -6,7 +6,7 @@ export type PageComponent = ComponentType & {
 };
 
 export type PageMeta = {
-  component: PageComponent;
+  componentPath: string;
   meta: PageMetaType;
 };
 
@@ -18,7 +18,7 @@ export const loadPage = async (): Promise<PageMeta[]> => {
     const module = (await modules[path]()) as any;
     const component = module.default as PageComponent;
     if (component && component.meta) {
-      pages.push({ component, meta: component.meta });
+      pages.push({ componentPath: path, meta: component.meta });
     }
   }
 

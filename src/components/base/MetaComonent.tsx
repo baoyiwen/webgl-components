@@ -1,4 +1,10 @@
-import { Component, CSSProperties, HTMLAttributes } from 'react';
+import {
+  Component,
+  ComponentType,
+  CSSProperties,
+  HTMLAttributes,
+  ReactNode,
+} from 'react';
 import { PageMetaType } from '../../types';
 
 export type MetaComponentProps = HTMLAttributes<any> & {
@@ -6,12 +12,20 @@ export type MetaComponentProps = HTMLAttributes<any> & {
   style?: CSSProperties;
 };
 
-export class MetaComponent<P = {}, S = {}> extends Component<
+export type PageComponent = ComponentType & {
+  meta: PageMetaType;
+};
+
+export abstract class MetaComponent<P = {}, S = {}> extends Component<
   P & MetaComponentProps,
   S
 > {
-  meta!: PageMetaType;
+  static meta: PageMetaType;
   constructor(props: P & MetaComponentProps) {
     super(props);
+  }
+
+  render(): ReactNode {
+    return null;
   }
 }
