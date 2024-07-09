@@ -8,21 +8,21 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noEmit": true,
-    "typeRoots": ["./node_modules/@types", "./src"]
+    // "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["vite.config.ts"],
-  "exclude": [
-    "assets",
-    "component",
-    "features",
-    "hooks",
-    "layout",
-    "page",
-    "settings",
-    "store",
-    "styles",
-    "tests",
-    "types",
-    "utils"
-  ]
+  "include": ["vite.config.ts", "src/**/*.d.ts"]
+  // "exclude": [
+  //   "assets",
+  //   "component",
+  //   "features",
+  //   "hooks",
+  //   "layout",
+  //   "page",
+  //   "settings",
+  //   "store",
+  //   "styles",
+  //   "tests",
+  //   "types",
+  //   "utils"
+  // ]
 }

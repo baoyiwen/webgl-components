@@ -1,4 +1,4 @@
-import { Component, ReactNode, Suspense, lazy } from 'react';
+import { Component, ReactNode, Suspense, lazy, ComponentType } from 'react';
 import classname from 'classnames';
 import './layout.less';
 import {
@@ -9,31 +9,102 @@ import {
   BrowserRouter as Router,
 } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
-import { themeStyle, defaultActiveMenu, baseSetting } from '../settings';
-import { Home } from '../page';
+import { themeStyle, baseSetting } from '../settings';
 import { CurrentData, MenuItem, setCurrentData, RouteData } from '../features';
 import { RootState } from '../store';
 import { connect } from 'react-redux';
-import { ItemType, MenuItemType } from 'antd/es/menu/interface';
+import { ErrorBoundary } from '../components';
+// import '@ant-design/icons/es/icons/SmileOutlined'
 
 export interface LayoutProps {
   menuItems: MenuItem[];
   currentData: CurrentData;
   routes: RouteData[];
+  isLoading: boolean; // 加载状态
   setCurrentData: (data: CurrentData) => void;
 }
 
-export class LayoutComponent extends Component<LayoutProps> {
+export class LayoutComponent extends Component<
+  LayoutProps,
+  { iconCache: Record<string, ComponentType<any>> }
+> {
   constructor(props: LayoutProps) {
     super(props);
+
+    this.state = {
+      iconCache: {},
+    };
   }
+
+  componentDidMount(): void {
+    // 组件挂载后预加载图标
+    this.preloadIcon();
+  }
+
+  componentDidUpdate(prevProps: LayoutProps) {
+    // 当 menuItems 数据加载完成后预加载图标
+    if (!this.props.isLoading && prevProps.isLoading) {
+      this.preloadIcon();
+    }
+  }
+
+  // 异步预加载图标
+  private async preloadIcon() {
+    // 获取所有图标
+    const iconTypes = this.getAllIconTypes(); // this.getAllIcons
+    const iconCache: Record<string, ComponentType<any>> = {};
+
+    // 动态导入图标并缓存
+    for (const iconType of iconTypes) {
+      if (!iconCache[iconType]) {
+        // 动态导入图标并缓存
+        try {
+          // const { default: Icon } = import.meta.glob(
+          //   `@ant-design/icons/es/icons/${iconType}`
+          // );
+         // iconCache[iconType] = Icon;
+        } catch (error) {
+          console.error(`Failed to load icon: ${iconType}`, error);
+        }
+      }
+    }
+
+    // 更新 state
+    this.setState({ iconCache });
+  }
+
+  // 获取所有的图标类型
+  getAllIconTypes() {
+    const { menuItems } = this.props;
+
+    const icons = new Set<string>();
+    const addIcon = (item: MenuItem) => {
+      if (item.icon) {
+        icons.add(item.icon);
+      }
+
+      if (item.children) {
+        item.children.forEach(addIcon);
+      }
+    };
+
+    menuItems.forEach(addIcon);
+    return Array.from(icons);
+  }
+
+  /**
+   * 动态导入图标
+   */
 
   render(): ReactNode {
     return (
       <div className={classname(['root-layout-LayoutComponent'])}>
         <Layout className={classname(['root-layout'])}>
           {this.renderSlide()}
-          <Layout className="root-content-layout">
+          <Layout
+            className="root-content-layout"
+            style={{ padding: '0 24px 24px' }}
+          >
             {this.renderHeader()}
             {this.renderContent()}
             {this.renderFooter()}
@@ -44,32 +115,47 @@ export class LayoutComponent extends Component<LayoutProps> {
   }
 
   private generateMenuItems(items: MenuItem[]): any[] {
-    const { setCurrentData } = this.props;
-    return items.map(item => ({
-      key: item.key,
-      label: (
-        <Link to={item.path} onClick={this.LinkClick.bind(this, item)}>
-          {item.label}
-        </Link>
-      ),
-      children: item.children
-        ? (this.generateMenuItems(item.children) as any[])
-        : undefined,
-    }));
+    const { iconCache } = this.state;
+    return items.map(item => {
+      const IconComponent = iconCache[item.icon || ''];
+      return {
+        key: item.key,
+        label: (
+          <Link to={item.path} onClick={this.LinkClick.bind(this, item)}>
+            {item.label}
+          </Link>
+        ),
+        children: item.children
+          ? (this.generateMenuItems(item.children) as any[])
+          : undefined,
+        icon: IconComponent ? <IconComponent /> : null,
+      };
+    });
   }
 
   renderSlide() {
-    const { menuItems } = this.props;
+    const { menuItems, currentData } = this.props;
     const { Sider } = Layout;
     return (
-      <Sider collapsible className={classname(['root-slide'])}>
+      <Sider
+        collapsible
+        className={classname(['root-slide'])}
+        width={themeStyle.slideWidth}
+        style={{
+          backgroundColor: '#CDE8E5',
+        }}
+      >
         <div className={classname(['root-slide-logo'])}></div>
         <Menu
           className={classname(['root-slide-menu'])}
-          theme={themeStyle.menuTheme}
+          theme={themeStyle.rightMenuTheme}
           mode={themeStyle.rightMenuModel}
-          defaultSelectedKeys={defaultActiveMenu}
+          selectedKeys={[currentData.currentPath]}
           items={this.generateMenuItems(menuItems)}
+          style={{
+            height: '100%',
+            borderRight: 0,
+          }}
         ></Menu>
       </Sider>
     );
@@ -98,28 +184,40 @@ export class LayoutComponent extends Component<LayoutProps> {
   renderContent() {
     const { routes, currentData } = this.props;
     const { Content } = Layout;
+    const modules = import.meta.glob('../page/**/*.tsx');
     const loadComponent = (componentPath: string) => {
-      const Component = lazy(() => import(`${componentPath}`));
-      return <Component></Component>;
+      const Component = lazy(modules[componentPath] as any);
+      return <Component />;
     };
     return (
-      <Content className={classname(['root-content'])}>
+      <Content
+        className={classname(['root-content'])}
+        style={{
+          padding: 24,
+          margin: 0,
+          minHeight: 280,
+          background: '#EEF7FF',
+          borderRadius: 8,
+        }}
+      >
         <div className={classname(['site-layout-content'])}>
-          <Suspense fallback={<div>Loading......</div>}>
-            <Routes>
-              {routes.map(route => (
+          <ErrorBoundary>
+            <Suspense fallback={<div>Loading......</div>}>
+              <Routes>
+                {routes.map(route => (
+                  <Route
+                    key={route.key}
+                    path={route.path}
+                    element={loadComponent(route.componentPath)}
+                  ></Route>
+                ))}
                 <Route
-                  key={route.key}
-                  path={route.path}
-                  element={loadComponent(route.componentPath)}
+                  path="*"
+                  element={<Navigate to={currentData.currentPath} replace />}
                 ></Route>
-              ))}
-              <Route
-                path="*"
-                element={<Navigate to={currentData.currentPath} replace />}
-              ></Route>
-            </Routes>
-          </Suspense>
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </Content>
     );
@@ -134,24 +232,13 @@ export class LayoutComponent extends Component<LayoutProps> {
       </Footer>
     );
   }
-
-  //   componentDidMount(): void {}
-
-  //   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {}
-
-  //   componentDidUpdate(
-  //     prevProps: Readonly<{}>,
-  //     prevState: Readonly<{}>,
-  //     snapshot?: any,
-  //   ): void {}
-
-  //   componentWillUnmount(): void {}
 }
 
 const mapStateToProps = (state: RootState) => ({
   menuItems: state.menuContent.items,
   currentData: state.menuContent.currentData,
   routes: state.menuContent.routes,
+  isLoading: state.menuContent.isLoading, // 将加载状态映射到 props
 });
 
 const mapDispatchToProps = {

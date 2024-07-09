@@ -9,6 +9,7 @@ export class Home extends MetaComponent {
     label: 'Home',
     path: '/',
     default: true,
+    icon: 'SmileOutlined',
   };
   constructor(props: HomeProps) {
     super(props);

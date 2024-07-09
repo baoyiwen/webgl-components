@@ -19,9 +19,9 @@ interface TestProps extends HTMLAttributes<any> {
 }
 
 export class TestComponent extends Component<TestProps> {
-  // constructor(props: TestProps) {
-  //   super(props);
-  // }
+  constructor(props: TestProps) {
+    super(props);
+  }
 
   render(): ReactNode {
     const {
@@ -30,9 +30,10 @@ export class TestComponent extends Component<TestProps> {
       decrement,
       incrementByAmount,
       decrementByAmount,
+      ...htmlProps
     } = this.props; // 解构state和actions
     return (
-      <div {...this.props}>
+      <div {...htmlProps}>
         <Card>Counter: {count}</Card>
         <Button
           className={classname(['Button', 'increment'])}

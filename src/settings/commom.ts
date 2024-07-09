@@ -5,6 +5,8 @@ type themeStyle = {
     menuTheme: MenuTheme
     menuMode: MenuMode
     rightMenuModel: MenuMode
+    slideWidth: number
+    rightMenuTheme: MenuTheme
 }
 
 
@@ -17,7 +19,9 @@ export const baseSetting = {
 export const themeStyle: themeStyle = {
     menuTheme: 'dark',
     menuMode: 'horizontal',
-    rightMenuModel: 'inline'
+    rightMenuModel: 'inline',
+    slideWidth: 200,
+    rightMenuTheme: 'light'
 }
 
 export const defaultActiveMenu = ['test-01']

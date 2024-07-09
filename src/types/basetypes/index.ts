@@ -6,4 +6,5 @@ export type PageMetaType = {
     children?: PageMetaType[]
     default?: boolean
     content?: ReactNode
+    icon?: string
 }
