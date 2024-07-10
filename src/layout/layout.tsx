@@ -15,7 +15,6 @@ import { RootState } from '../store';
 import { connect } from 'react-redux';
 import { ErrorBoundary, Icon, CustomIconComponentProps } from '../components';
 import { Scrollbar } from 'react-scrollbars-custom';
-// import '@ant-design/icons/es/icons/SmileOutlined'
 
 export interface LayoutProps {
   menuItems: MenuItem[];
@@ -205,52 +204,41 @@ export class LayoutComponent extends Component<
         }}
       >
         <div className={classname(['site-layout-content'])}>
-          <Scrollbar
-            className="content-warp"
-            noScrollX
-            style={{
-              height: '100%',
-              width: '100%',
-            }}
-            // trackYProps={{
-            //   renderer: props => {
-            //     const { elementRef, style, ...restProps } = props;
-            //     return (
-            //       <span
-            //         {...restProps}
-            //         ref={elementRef}
-            //         style={{
-            //           ...style,
-            //           right: 2,
-            //           bottom: 2,
-            //           top: 2,
-            //           borderRadius: 4,
-            //           backgroundColor: '#e0e0e0',
-            //         }}
-            //       />
-            //     );
-            //   },
-            // }}
-            // thumbYProps={{
-            //   renderer: props => {
-            //     const { elementRef, style, ...restProps } = props;
-            //     return (
-            //       <div
-            //         {...restProps}
-            //         ref={elementRef}
-            //         style={{
-            //           ...style,
-            //           backgroundColor: '#888',
-            //           borderRadius: 4,
-            //         }}
-            //       />
-            //     );
-            //   },
-            // }}
-            scrollDetectionThreshold={0} // 设置为 0 以禁用滚动检测节流
-          >
-            <ErrorBoundary>
-              <Suspense fallback={<div>Loading......</div>}>
+          <ErrorBoundary>
+            <Suspense fallback={<div>Loading......</div>}>
+              <Scrollbar
+                className="content-warp"
+                noScrollX
+                style={{
+                  height: '100%',
+                  width: '100%',
+                }}
+                trackYProps={{
+                  renderer: ({ elementRef, ...restProps }) => (
+                    <div
+                      {...restProps}
+                      ref={elementRef}
+                      style={{
+                        right: 2,
+                        bottom: 2,
+                        top: 2,
+                        borderRadius: 4,
+                        backgroundColor: '#e0e0e0',
+                      }}
+                    />
+                  ),
+                }}
+                thumbYProps={{
+                  renderer: ({ elementRef, ...restProps }) => (
+                    <div
+                      {...restProps}
+                      ref={elementRef}
+                      style={{ backgroundColor: '#888', borderRadius: 4 }}
+                    />
+                  ),
+                }}
+                scrollDetectionThreshold={0} // 设置为 0 以禁用滚动检测节流
+              >
                 <Routes>
                   {routes.map(route => (
                     <Route
@@ -264,9 +252,9 @@ export class LayoutComponent extends Component<
                     element={<Navigate to={currentData.currentPath} replace />}
                   ></Route>
                 </Routes>
-              </Suspense>
-            </ErrorBoundary>
-          </Scrollbar>
+              </Scrollbar>
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </Content>
     );
