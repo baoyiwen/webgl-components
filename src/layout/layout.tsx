@@ -13,7 +13,8 @@ import { themeStyle, baseSetting } from '../settings';
 import { CurrentData, MenuItem, setCurrentData, RouteData } from '../features';
 import { RootState } from '../store';
 import { connect } from 'react-redux';
-import { ErrorBoundary } from '../components';
+import { ErrorBoundary, Icon, CustomIconComponentProps } from '../components';
+import { Scrollbar } from 'react-scrollbars-custom';
 // import '@ant-design/icons/es/icons/SmileOutlined'
 
 export interface LayoutProps {
@@ -26,7 +27,7 @@ export interface LayoutProps {
 
 export class LayoutComponent extends Component<
   LayoutProps,
-  { iconCache: Record<string, ComponentType<any>> }
+  { iconCache: Record<string, ComponentType<CustomIconComponentProps>> }
 > {
   constructor(props: LayoutProps) {
     super(props);
@@ -52,17 +53,17 @@ export class LayoutComponent extends Component<
   private async preloadIcon() {
     // 获取所有图标
     const iconTypes = this.getAllIconTypes(); // this.getAllIcons
-    const iconCache: Record<string, ComponentType<any>> = {};
+    const iconCache: Record<
+      string,
+      ComponentType<CustomIconComponentProps>
+    > = {};
 
     // 动态导入图标并缓存
     for (const iconType of iconTypes) {
       if (!iconCache[iconType]) {
         // 动态导入图标并缓存
         try {
-          // const { default: Icon } = import.meta.glob(
-          //   `@ant-design/icons/es/icons/${iconType}`
-          // );
-         // iconCache[iconType] = Icon;
+          iconCache[iconType] = Icon;
         } catch (error) {
           console.error(`Failed to load icon: ${iconType}`, error);
         }
@@ -103,7 +104,7 @@ export class LayoutComponent extends Component<
           {this.renderSlide()}
           <Layout
             className="root-content-layout"
-            style={{ padding: '0 24px 24px' }}
+            style={{ padding: '0 24px 0' }}
           >
             {this.renderHeader()}
             {this.renderContent()}
@@ -128,7 +129,10 @@ export class LayoutComponent extends Component<
         children: item.children
           ? (this.generateMenuItems(item.children) as any[])
           : undefined,
-        icon: IconComponent ? <IconComponent /> : null,
+        icon:
+          item.icon && IconComponent ? (
+            <IconComponent iconType={item.icon} />
+          ) : null,
       };
     });
   }
@@ -142,7 +146,7 @@ export class LayoutComponent extends Component<
         className={classname(['root-slide'])}
         width={themeStyle.slideWidth}
         style={{
-          backgroundColor: '#CDE8E5',
+          backgroundColor: '#F0F8FF',
         }}
       >
         <div className={classname(['root-slide-logo'])}></div>
@@ -193,31 +197,76 @@ export class LayoutComponent extends Component<
       <Content
         className={classname(['root-content'])}
         style={{
-          padding: 24,
+          padding: 12,
           margin: 0,
           minHeight: 280,
           background: '#EEF7FF',
-          borderRadius: 8,
+          // borderRadius: 8,
         }}
       >
         <div className={classname(['site-layout-content'])}>
-          <ErrorBoundary>
-            <Suspense fallback={<div>Loading......</div>}>
-              <Routes>
-                {routes.map(route => (
+          <Scrollbar
+            className="content-warp"
+            noScrollX
+            style={{
+              height: '100%',
+              width: '100%',
+            }}
+            // trackYProps={{
+            //   renderer: props => {
+            //     const { elementRef, style, ...restProps } = props;
+            //     return (
+            //       <span
+            //         {...restProps}
+            //         ref={elementRef}
+            //         style={{
+            //           ...style,
+            //           right: 2,
+            //           bottom: 2,
+            //           top: 2,
+            //           borderRadius: 4,
+            //           backgroundColor: '#e0e0e0',
+            //         }}
+            //       />
+            //     );
+            //   },
+            // }}
+            // thumbYProps={{
+            //   renderer: props => {
+            //     const { elementRef, style, ...restProps } = props;
+            //     return (
+            //       <div
+            //         {...restProps}
+            //         ref={elementRef}
+            //         style={{
+            //           ...style,
+            //           backgroundColor: '#888',
+            //           borderRadius: 4,
+            //         }}
+            //       />
+            //     );
+            //   },
+            // }}
+            scrollDetectionThreshold={0} // 设置为 0 以禁用滚动检测节流
+          >
+            <ErrorBoundary>
+              <Suspense fallback={<div>Loading......</div>}>
+                <Routes>
+                  {routes.map(route => (
+                    <Route
+                      key={route.key}
+                      path={route.path}
+                      element={loadComponent(route.componentPath)}
+                    ></Route>
+                  ))}
                   <Route
-                    key={route.key}
-                    path={route.path}
-                    element={loadComponent(route.componentPath)}
+                    path="*"
+                    element={<Navigate to={currentData.currentPath} replace />}
                   ></Route>
-                ))}
-                <Route
-                  path="*"
-                  element={<Navigate to={currentData.currentPath} replace />}
-                ></Route>
-              </Routes>
-            </Suspense>
-          </ErrorBoundary>
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
+          </Scrollbar>
         </div>
       </Content>
     );
