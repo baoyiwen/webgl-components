@@ -11,5 +11,5 @@ const store = configureStore({
 });
 
 export type RootState = ReturnType<typeof store.getState>; // 获取store的状态的类型
-export type AppDispath = typeof store.dispatch;
+export type AppDispatch = typeof store.dispatch;
 export default store;

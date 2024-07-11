@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PageMetaType } from '../../types';
-import { ComponentType } from 'react';
 
 export type MenuItem = {
   key: string;
@@ -8,6 +7,8 @@ export type MenuItem = {
   path: string;
   children?: MenuItem[] | undefined | null;
   data: PageMetaType;
+  icon?: string;
+  title?: string;
 };
 
 export type RouteData = {
@@ -20,6 +21,7 @@ export type MenuState = {
   items: MenuItem[];
   currentData: CurrentData;
   routes: RouteData[];
+  isLoading: boolean; // 添加加载状态标志
 };
 
 export type CurrentData = {
@@ -44,6 +46,7 @@ const initialState: MenuState = {
     currentPath: '',
   },
   routes: [],
+  isLoading: true, // 初始状态为加载中
 };
 
 const menuSlice = createSlice({
@@ -52,6 +55,7 @@ const menuSlice = createSlice({
   reducers: {
     setMenuItems: (state, action: PayloadAction<MenuItem[]>) => {
       state.items = action.payload;
+      state.isLoading = false; // 数据加载完成
     },
     setCurrentData: (state, action: PayloadAction<CurrentData>) => {
       state.currentData = action.payload;
@@ -60,9 +64,13 @@ const menuSlice = createSlice({
     setRoutes: (state, action: PayloadAction<RouteData[]>) => {
       state.routes = action.payload;
     },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload; // 更新加载状态
+    },
   },
 });
 
-export const { setMenuItems, setCurrentData, setRoutes } = menuSlice.actions;
+export const { setMenuItems, setCurrentData, setRoutes, setLoading } =
+  menuSlice.actions;
 export const MenuReducer = menuSlice.reducer;
 export default MenuReducer;

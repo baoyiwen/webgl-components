@@ -19,9 +19,9 @@ interface TestProps extends HTMLAttributes<any> {
 }
 
 export class TestComponent extends Component<TestProps> {
-  // constructor(props: TestProps) {
-  //   super(props);
-  // }
+  constructor(props: TestProps) {
+    super(props);
+  }
 
   render(): ReactNode {
     const {
@@ -30,10 +30,11 @@ export class TestComponent extends Component<TestProps> {
       decrement,
       incrementByAmount,
       decrementByAmount,
+      ...htmlProps
     } = this.props; // 解构state和actions
     return (
-      <div {...this.props}>
-        <Card>Counter: {count}</Card>
+      <div {...htmlProps}>
+        <Card style={{ margin: '15px' }}>Counter: {count}</Card>
         <Button
           className={classname(['Button', 'increment'])}
           onClick={increment?.bind(this, 1)}
@@ -43,18 +44,21 @@ export class TestComponent extends Component<TestProps> {
         <Button
           className={classname(['Button', 'decrement'])}
           onClick={decrement?.bind(this, 1)}
+          style={{marginLeft: '16px'}}
         >
           decrement
         </Button>
         <Button
           className={classname(['Button', 'incrementByAmount'])}
           onClick={incrementByAmount?.bind(this, 5)}
+          style={{marginLeft: '16px'}}
         >
           incrementByAmount
         </Button>
         <Button
           className={classname(['Button', 'decrementByAmount'])}
           onClick={decrementByAmount?.bind(this, 5)}
+          style={{marginLeft: '16px'}}
         >
           decrementByAmount
         </Button>

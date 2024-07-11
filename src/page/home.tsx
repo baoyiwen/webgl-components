@@ -6,9 +6,11 @@ import { TestMapComponents } from '../components';
 export type HomeProps = MetaComponentProps & {};
 export class Home extends MetaComponent {
   static meta = {
-    label: 'Home',
+    title: '测试页面',
+    label: 'TestPage',
     path: '/',
     default: true,
+    icon: 'SmileOutlined',
   };
   constructor(props: HomeProps) {
     super(props);
