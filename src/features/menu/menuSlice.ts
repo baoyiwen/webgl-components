@@ -8,6 +8,7 @@ export type MenuItem = {
   children?: MenuItem[] | undefined | null;
   data: PageMetaType;
   icon?: string;
+  title?: string;
 };
 
 export type RouteData = {

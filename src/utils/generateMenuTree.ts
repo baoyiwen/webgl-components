@@ -11,6 +11,7 @@ export const generateMenuTree = (
     const path = basePath + page.meta.path;
     const children = pages.filter(p => p.meta.path.startsWith(path + '/'));
     return {
+      title: page.meta.title,
       key: path,
       label: page.meta.label,
       path,
@@ -48,6 +49,7 @@ export const settingDefaultPagePath = (
           label: defaultMeta.label,
           data: defaultMeta,
           icon: defaultMeta.icon,
+          title: defaultMeta.title,
         },
         currentKey: defaultMeta.path,
         currentPath: defaultMeta.path,
@@ -63,6 +65,7 @@ export const settingDefaultPagePath = (
           label: pageMeta.label,
           data: pageMeta,
           icon: pageMeta.icon,
+          title: pageMeta.title,
         },
         currentKey: pageMeta.path,
         currentPath: pageMeta.path,

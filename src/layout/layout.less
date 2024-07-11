@@ -1,89 +1,158 @@
 @primary-color: #87cefa; // 淡蓝色
 @background-color: #ffffff; // 白色
-@header-background-color: #b0e0e6; // 更深的淡蓝色
-@footer-background-color: #87cefa; // 淡蓝色
+@header-background-color: #02667d; // 更深的淡蓝色
+@footer-background-color: #cfecff; // 淡蓝色
 @slide-background-color: #f0f8ff; // 非常浅的蓝色
+@font-color: #959595; // 字体颜色
+@tools-bar-background-color: #b0e0e6; // 工具栏颜色
 
 .root-layout-LayoutComponent {
   --layout-width: 100%;
   --layout-height: 100%;
-  --layout-background-color: @background-color;
+  --layout-background-color: rgba(255,255,255, 0.2);
   --layout-color: inherit;
   --layout-transition-time: 0.3s;
   --layout-header-height: 48px;
+  --layout-tools-height: 48px;
+  --layout-logo-size: 36px;
 
   background-color: var(--layout-background-color);
   width: var(--layout-width);
   height: var(--layout-height);
   color: var(--layout-color);
+  border-top: 1px solid #fff8;
+  border-bottom: 1px solid #34343455;
+  border-radius: 4px;
+  box-shadow: 0px 0px 3px #34343488;
+  overflow: hidden;
+  padding: 4px;
+  backdrop-filter: blur(40px);
 
   * {
     transition: all var(--layout-transition-time);
   }
-  .root-layout {
+  .root-layout-warp {
     width: 100%;
     height: 100%;
-    background: @background-color;
-    // slide
-    .root-slide {
-      background: @slide-background-color;
-      .ant-layout-sider-trigger {
-        bottom: auto !important;
-        background: @primary-color !important;
-      }
-
-      .root-slide-logo {
-        height: var(--layout-header-height);
-        background: @header-background-color;
-        // margin: 16px;
-      }
-
-      .root-slide-menu {
-        background: @slide-background-color;
-        height: calc(100% - var(--layout-header-height));
-        .slide-menu-item {
+    .root-header {
+      background: @header-background-color;
+      padding: 0;
+      line-height: var(--layout-header-height);
+      height: var(--layout-header-height);
+      .header-warp {
+        color: @primary-color;
+        font-size: 24px;
+        font-weight: bold;
+        color: @font-color;
+        text-align: center;
+        display: flex;
+        .root-project-info {
+          cursor: pointer;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          padding: 0 0 0 10px;
+          .root-logo {
+            height: var(--layout-logo-size);
+            width: var(--layout-logo-size);
+            img {
+              height: 100%;
+              width: 100%;
+            }
+          }
+          .root-project-title {
+            margin-left: 8px;
+            user-select: none;
+          }
         }
 
-        .slide-menu-link {
+        .root-header-tools {
+          flex: 1;
+          display: flex;
+          flex-direction: row-reverse;
+          padding: 0 8px;
         }
       }
     }
-
-    // 内容标签类名
-    .root-content-layout {
+    .root-layout {
+      width: 100%;
+      height: 100%;
       background: @background-color;
-      .root-header {
-        background: @header-background-color;
-        padding: 0;
-        line-height: var(--layout-header-height);
-        .header-warp {
-          color: @primary-color;
-          font-size: 24px;
-          font-weight: bold;
-          color: #fff;
-          text-align: center;
+      margin-top: 8px;
+      // slide
+      .root-slide {
+        background: @slide-background-color;
+        .ant-layout-sider-trigger {
+          bottom: auto !important;
+          background: @footer-background-color !important;
+          svg {
+            fill: @font-color !important;
+          }
         }
-      }
 
-      // 内容
-      .root-content {
-        margin: 24px 16px 0;
-        .site-layout-content {
-          background: @background-color;
-          padding: 24px;
-          border-radius: 8px;
-          min-height: 360px;
-          height: 100%;
-          .content-warp {
+        .root-slide-title {
+          height: var(--layout-tools-height);
+          background: @tools-bar-background-color;
+          // margin: 16px;
+        }
+
+        .root-slide-menu {
+          background: @slide-background-color;
+          height: calc(100% - var(--layout-tools-height));
+          border-right: 0;
+          .slide-menu-item {
+          }
+
+          .slide-menu-link {
           }
         }
       }
 
-      .root-footer {
-        background: @footer-background-color;
-        color: @background-color;
-        text-align: center;
-        padding: 24px 0;
+      // 内容标签类名
+      .root-content-layout {
+        padding: 0 0 0 12px;
+        // background: @background-color;
+        .root-tools {
+          background: @tools-bar-background-color;
+          padding: 0;
+          line-height: var(--layout-tools-height);
+          height: var(--layout-tools-height);
+          .tools-warp {
+            color: @primary-color;
+            font-size: 24px;
+            font-weight: bold;
+            color: @font-color;
+            text-align: center;
+          }
+        }
+        // 内容
+        .root-content {
+          padding: 12px;
+          margin: 0;
+          min-height: 280;
+          background: #eef7ff;
+          // margin: 24px 16px 0;
+          .site-layout-content {
+            background: @background-color;
+            padding: 24px;
+            border-radius: 8px;
+            min-height: 360px;
+            height: 100%;
+            .content-warp {
+              height: 100%;
+              width: 100%;
+            }
+          }
+        }
+
+        .root-footer {
+          height: var(--layout-tools-height);
+          background: @footer-background-color;
+          color: @font-color;
+          text-align: center;
+          padding: 24px 0;
+          line-height: 0;
+        }
       }
     }
   }

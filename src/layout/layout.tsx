@@ -14,7 +14,7 @@ import { CurrentData, MenuItem, setCurrentData, RouteData } from '../features';
 import { RootState } from '../store';
 import { connect } from 'react-redux';
 import { ErrorBoundary, Icon, CustomIconComponentProps } from '../components';
-import { Scrollbar } from 'react-scrollbars-custom';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 export interface LayoutProps {
   menuItems: MenuItem[];
@@ -26,13 +26,17 @@ export interface LayoutProps {
 
 export class LayoutComponent extends Component<
   LayoutProps,
-  { iconCache: Record<string, ComponentType<CustomIconComponentProps>> }
+  {
+    iconCache: Record<string, ComponentType<CustomIconComponentProps>>;
+    menuIconSize: number;
+  }
 > {
   constructor(props: LayoutProps) {
     super(props);
 
     this.state = {
       iconCache: {},
+      menuIconSize: 16,
     };
   }
 
@@ -99,15 +103,15 @@ export class LayoutComponent extends Component<
   render(): ReactNode {
     return (
       <div className={classname(['root-layout-LayoutComponent'])}>
-        <Layout className={classname(['root-layout'])}>
-          {this.renderSlide()}
-          <Layout
-            className="root-content-layout"
-            style={{ padding: '0 24px 0' }}
-          >
-            {this.renderHeader()}
-            {this.renderContent()}
-            {this.renderFooter()}
+        <Layout className="root-layout-warp">
+          {this.renderHeader()}
+          <Layout className={classname(['root-layout'])}>
+            {this.renderSlide()}
+            <Layout className="root-content-layout">
+              {this.renderToolsbar()}
+              {this.renderContent()}
+              {this.renderFooter()}
+            </Layout>
           </Layout>
         </Layout>
       </div>
@@ -115,14 +119,15 @@ export class LayoutComponent extends Component<
   }
 
   private generateMenuItems(items: MenuItem[]): any[] {
-    const { iconCache } = this.state;
+    const { iconCache, menuIconSize } = this.state;
     return items.map(item => {
       const IconComponent = iconCache[item.icon || ''];
       return {
         key: item.key,
+        title: item.title,
         label: (
           <Link to={item.path} onClick={this.LinkClick.bind(this, item)}>
-            {item.label}
+            {item.title ? item.title : item.label}
           </Link>
         ),
         children: item.children
@@ -130,7 +135,12 @@ export class LayoutComponent extends Component<
           : undefined,
         icon:
           item.icon && IconComponent ? (
-            <IconComponent iconType={item.icon} />
+            <IconComponent
+              iconType={item.icon}
+              style={{
+                fontSize: menuIconSize,
+              }}
+            />
           ) : null,
       };
     });
@@ -144,21 +154,18 @@ export class LayoutComponent extends Component<
         collapsible
         className={classname(['root-slide'])}
         width={themeStyle.slideWidth}
-        style={{
-          backgroundColor: '#F0F8FF',
-        }}
+        collapsedWidth={48}
+        // style={{
+        //   backgroundColor: '#F0F8FF',
+        // }}
       >
-        <div className={classname(['root-slide-logo'])}></div>
+        <div className={classname(['root-slide-title'])}></div>
         <Menu
           className={classname(['root-slide-menu'])}
           theme={themeStyle.rightMenuTheme}
           mode={themeStyle.rightMenuModel}
           selectedKeys={[currentData.currentPath]}
           items={this.generateMenuItems(menuItems)}
-          style={{
-            height: '100%',
-            borderRight: 0,
-          }}
         ></Menu>
       </Sider>
     );
@@ -178,8 +185,23 @@ export class LayoutComponent extends Component<
     return (
       <Header className={classname(['root-header'])}>
         <div className={classname(['header-warp'])}>
-          {baseSetting.projectTitle}
+          <div className='root-project-info'>
+            <div className="root-logo">
+              <img src="../../public/vite.svg" alt="" />
+            </div>
+            <div className="root-project-title">{baseSetting.projectTitle}</div>
+          </div>
+          <div className='root-header-tools'></div>
         </div>
+      </Header>
+    );
+  }
+
+  renderToolsbar(): ReactNode {
+    const { Header } = Layout;
+    return (
+      <Header className={classname(['root-tools'])}>
+        <div className={classname(['tools-warp'])}></div>
       </Header>
     );
   }
@@ -193,51 +215,16 @@ export class LayoutComponent extends Component<
       return <Component />;
     };
     return (
-      <Content
-        className={classname(['root-content'])}
-        style={{
-          padding: 12,
-          margin: 0,
-          minHeight: 280,
-          background: '#EEF7FF',
-          // borderRadius: 8,
-        }}
-      >
+      <Content className={classname(['root-content'])}>
         <div className={classname(['site-layout-content'])}>
           <ErrorBoundary>
             <Suspense fallback={<div>Loading......</div>}>
-              <Scrollbar
+              <Scrollbars
                 className="content-warp"
-                noScrollX
-                style={{
-                  height: '100%',
-                  width: '100%',
-                }}
-                trackYProps={{
-                  renderer: ({ elementRef, ...restProps }) => (
-                    <div
-                      {...restProps}
-                      ref={elementRef}
-                      style={{
-                        right: 2,
-                        bottom: 2,
-                        top: 2,
-                        borderRadius: 4,
-                        backgroundColor: '#e0e0e0',
-                      }}
-                    />
-                  ),
-                }}
-                thumbYProps={{
-                  renderer: ({ elementRef, ...restProps }) => (
-                    <div
-                      {...restProps}
-                      ref={elementRef}
-                      style={{ backgroundColor: '#888', borderRadius: 4 }}
-                    />
-                  ),
-                }}
-                scrollDetectionThreshold={0} // 设置为 0 以禁用滚动检测节流
+                autoHide
+                autoHideTimeout={1000}
+                autoHideDuration={200}
+                universal
               >
                 <Routes>
                   {routes.map(route => (
@@ -252,7 +239,7 @@ export class LayoutComponent extends Component<
                     element={<Navigate to={currentData.currentPath} replace />}
                   ></Route>
                 </Routes>
-              </Scrollbar>
+              </Scrollbars>
             </Suspense>
           </ErrorBoundary>
         </div>

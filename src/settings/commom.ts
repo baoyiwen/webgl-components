@@ -20,7 +20,7 @@ export const themeStyle: themeStyle = {
     menuTheme: 'dark',
     menuMode: 'horizontal',
     rightMenuModel: 'inline',
-    slideWidth: 200,
+    slideWidth: 160,
     rightMenuTheme: 'light'
 }
 

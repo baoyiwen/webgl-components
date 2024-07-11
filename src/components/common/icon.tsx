@@ -1,5 +1,5 @@
 import { GetProps } from 'antd';
-import { Component, createElement, ReactNode } from 'react';
+import { Component, createElement, HTMLAttributes, ReactNode } from 'react';
 import * as Icons from '@ant-design/icons';
 // import Icon from '@ant-design/icons';
 
@@ -11,9 +11,10 @@ export const getIconElement = (props: { iconType: string }) => {
   return antIcon[iconType];
 };
 
-export type CustomIconComponentProps = Partial<GetProps<typeof Icons>> & {
-  iconType: string;
-};
+export type CustomIconComponentProps = Partial<GetProps<typeof Icons>> &
+  HTMLAttributes<any> & {
+    iconType: string;
+  };
 export class Icon extends Component<CustomIconComponentProps> {
   constructor(props: CustomIconComponentProps) {
     super(props);
