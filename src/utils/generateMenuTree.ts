@@ -2,6 +2,7 @@ import { PageMeta } from './loadPage';
 import { setCurrentData, setMenuItems, MenuItem, setRoutes } from '../features';
 import { AppDispatch } from '../store';
 
+
 // 自动生成菜单树
 export const generateMenuTree = (
   pages: PageMeta[],
