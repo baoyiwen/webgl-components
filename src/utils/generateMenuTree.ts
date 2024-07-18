@@ -1,21 +1,25 @@
 import { PageMeta } from './loadPage';
 import { setCurrentData, setMenuItems, MenuItem, setRoutes } from '../features';
 import { AppDispatch } from '../store';
+import { treeNodeBuild, TreeNodeProps } from './common';
 
 // 自动生成菜单树
 export const generateMenuTree = (
-  pages: PageMeta[],
+  pages: TreeNodeProps,
   basePath = '',
 ): MenuItem[] => {
   const tree = pages.map(page => {
     const path = basePath + page.meta.path;
-    const children = pages.filter(p => p.meta.path.startsWith(path + '/'));
+    // const children = pages.filter(p => p.meta.path.startsWith(path + '/'));
     return {
       title: page.meta.title,
-      key: path,
+      key: path ? path : page.meta.label,
       label: page.meta.label,
       path,
-      children: children.length ? generateMenuTree(children, path) : undefined,
+      children:
+        page.children && page.children.length
+          ? generateMenuTree(page.children, path)
+          : undefined,
       data: page.meta,
       icon: page.meta.icon,
     };
@@ -28,8 +32,9 @@ export const generateMenuDataByStore = (
   pages: PageMeta[],
   dispatch: AppDispatch,
 ) => {
-  const menuData = generateMenuTree(pages);
-  // pages.filter(p => !p.meta.path.includes('/')),
+  const treeData = treeNodeBuild(pages, ['..', 'page']);
+  const menuData = generateMenuTree(treeData);
+  // console.error(menuData);
   dispatch(setMenuItems(menuData));
 };
 

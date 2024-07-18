@@ -25,7 +25,5 @@ export abstract class MetaComponent<P = {}, S = {}> extends Component<
     super(props);
   }
 
-  render(): ReactNode {
-    return null;
-  }
+  abstract render(): React.ReactNode;
 }

@@ -126,7 +126,11 @@ export class LayoutComponent extends Component<
         key: item.key,
         title: item.title,
         label: (
-          <Link to={item.path} onClick={this.LinkClick.bind(this, item)}>
+          <Link
+            to={item.path}
+            onClick={this.LinkClick.bind(this, item)}
+            className="router-link"
+          >
             {item.title ? item.title : item.label}
           </Link>
         ),
@@ -166,6 +170,7 @@ export class LayoutComponent extends Component<
           mode={themeStyle.rightMenuModel}
           selectedKeys={[currentData.currentPath]}
           items={this.generateMenuItems(menuItems)}
+          inlineIndent={themeStyle.menuInlineIndent}
         ></Menu>
       </Sider>
     );
@@ -173,11 +178,13 @@ export class LayoutComponent extends Component<
 
   private LinkClick(data: MenuItem) {
     const { setCurrentData } = this.props;
-    setCurrentData({
-      currentKey: data.key,
-      currentPath: data.path,
-      currentMenu: data,
-    });
+    if (data.path) {
+      setCurrentData({
+        currentKey: data.key,
+        currentPath: data.path,
+        currentMenu: data,
+      });
+    }
   }
 
   renderHeader(): ReactNode {
@@ -185,13 +192,13 @@ export class LayoutComponent extends Component<
     return (
       <Header className={classname(['root-header'])}>
         <div className={classname(['header-warp'])}>
-          <div className='root-project-info'>
+          <div className="root-project-info">
             <div className="root-logo">
               <img src="../../public/vite.svg" alt="" />
             </div>
             <div className="root-project-title">{baseSetting.projectTitle}</div>
           </div>
-          <div className='root-header-tools'></div>
+          <div className="root-header-tools"></div>
         </div>
       </Header>
     );
@@ -214,6 +221,7 @@ export class LayoutComponent extends Component<
       const Component = lazy(modules[componentPath] as any);
       return <Component />;
     };
+
     return (
       <Content className={classname(['root-content'])}>
         <div className={classname(['site-layout-content'])}>
@@ -227,13 +235,15 @@ export class LayoutComponent extends Component<
                 universal
               >
                 <Routes>
-                  {routes.map(route => (
-                    <Route
-                      key={route.key}
-                      path={route.path}
-                      element={loadComponent(route.componentPath)}
-                    ></Route>
-                  ))}
+                  {routes
+                    .filter(r => r.path)
+                    .map(route => (
+                      <Route
+                        key={route.key}
+                        path={route.path}
+                        element={loadComponent(route.componentPath)}
+                      ></Route>
+                    ))}
                   <Route
                     path="*"
                     element={<Navigate to={currentData.currentPath} replace />}

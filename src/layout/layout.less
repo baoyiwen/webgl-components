@@ -9,7 +9,7 @@
 .root-layout-LayoutComponent {
   --layout-width: 100%;
   --layout-height: 100%;
-  --layout-background-color: rgba(255,255,255, 0.2);
+  --layout-background-color: rgba(255, 255, 255, 0.2);
   --layout-color: inherit;
   --layout-transition-time: 0.3s;
   --layout-header-height: 48px;
@@ -82,6 +82,9 @@
       // slide
       .root-slide {
         background: @slide-background-color;
+        .ant-menu-title-content {
+          display: flex;
+        } // 菜单文字距离图标的排列
         .ant-layout-sider-trigger {
           bottom: auto !important;
           background: @footer-background-color !important;
