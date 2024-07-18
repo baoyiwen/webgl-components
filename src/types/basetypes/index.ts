@@ -8,4 +8,5 @@ export type PageMetaType = {
   content?: ReactNode;
   icon?: string;
   title?: string;
+  discription?: string
 };

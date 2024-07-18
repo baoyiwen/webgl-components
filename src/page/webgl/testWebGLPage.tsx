@@ -1,17 +1,17 @@
 import { ReactNode } from 'react';
 import './less/testWebGLPage.less';
 import { MetaComponent, MetaComponentProps } from '../../components';
-import { TestWebGL } from '../../components'
+import { TestWebGL } from '../../components';
 
-export type TestWebGLProps = MetaComponentProps & {};
-export class TestWebGLPage extends MetaComponent {
+export type testWEbGLPageProps = MetaComponentProps & {};
+export class testWEbGLPage extends MetaComponent {
   static meta = {
-    title: 'WebGL',
-    label: 'WebGL',
-    path: '/testWebGLPage',
-    icon: 'CodeSandboxOutlined',
+    title: 'WebGL Test',
+    label: 'WebGL-Test',
+    path: '/testWEbGLPage',
+    icon: 'CodepenOutlined',
   };
-  constructor(props: TestWebGLProps) {
+  constructor(props: testWEbGLPageProps) {
     super(props);
   }
 
@@ -24,4 +24,4 @@ export class TestWebGLPage extends MetaComponent {
   }
 }
 
-export default TestWebGLPage;
+export default testWEbGLPage;
