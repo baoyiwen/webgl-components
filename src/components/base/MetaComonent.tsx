@@ -12,16 +12,18 @@ export type MetaComponentProps = HTMLAttributes<any> & {
   style?: CSSProperties;
 };
 
+export type MetaComonentState = {};
+
 export type PageComponent = ComponentType & {
   meta: PageMetaType;
 };
 
-export abstract class MetaComponent<P = {}, S = {}> extends Component<
-  P & MetaComponentProps,
-  S
-> {
+export abstract class MetaComponent<
+  P = MetaComponentProps,
+  S = MetaComonentState,
+> extends Component<P, S> {
   static meta: PageMetaType;
-  constructor(props: P & MetaComponentProps) {
+  constructor(props: P) {
     super(props);
   }
 

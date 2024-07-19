@@ -1,1 +1,1 @@
-export * from './TestWebGL'
+export * from './TestWebGL';

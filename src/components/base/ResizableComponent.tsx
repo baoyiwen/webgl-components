@@ -8,10 +8,10 @@ export type ResizableComponentState = {
   height: number;
 };
 
-export abstract class ResizableComponent extends MetaComponent<
-  ResizableComponentProps,
-  ResizableComponentState
-> {
+export abstract class ResizableComponent<
+  P = ResizableComponentProps,
+  S = ResizableComponentState,
+> extends MetaComponent<P, S> {
   static meta: PageMetaType = {
     label: '监听大小变化组件',
     path: '',
@@ -20,15 +20,15 @@ export abstract class ResizableComponent extends MetaComponent<
     不然会引起一部分组件功能不工作。`,
   };
 
-  private containerRef!: RefObject<HTMLDivElement>;
+  containerRef!: RefObject<HTMLDivElement>;
   private resizeObserver!: ResizeObserver;
 
-  constructor(props: ResizableComponentProps) {
+  constructor(props: P) {
     super(props);
     this.state = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    };
+      width: 0,
+      height: 0,
+    } as S;
     this.containerRef = createRef();
     this.handleResize = this.handleResize.bind(this);
     this.resizeObserver = new ResizeObserver(entries => {
@@ -44,7 +44,7 @@ export abstract class ResizableComponent extends MetaComponent<
     this.setState({
       width,
       height,
-    });
+    } as S);
   }
   componentDidMount(): void {
     if (this.containerRef.current) {

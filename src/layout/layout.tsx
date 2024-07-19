@@ -13,7 +13,12 @@ import { themeStyle, baseSetting } from '../settings';
 import { CurrentData, MenuItem, setCurrentData, RouteData } from '../features';
 import { RootState } from '../store';
 import { connect } from 'react-redux';
-import { ErrorBoundary, Icon, CustomIconComponentProps } from '../components';
+import {
+  ErrorBoundary,
+  Icon,
+  CustomIconComponentProps,
+  ScrollLayout,
+} from '../components';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 
 export interface LayoutProps {
@@ -227,13 +232,7 @@ export class LayoutComponent extends Component<
         <div className={classname(['site-layout-content'])}>
           <ErrorBoundary>
             <Suspense fallback={<div>Loading......</div>}>
-              <Scrollbars
-                className="content-warp"
-                autoHide
-                autoHideTimeout={1000}
-                autoHideDuration={200}
-                universal
-              >
+              <ScrollLayout>
                 <Routes>
                   {routes
                     .filter(r => r.path)
@@ -249,7 +248,17 @@ export class LayoutComponent extends Component<
                     element={<Navigate to={currentData.currentPath} replace />}
                   ></Route>
                 </Routes>
-              </Scrollbars>
+              </ScrollLayout>
+
+              {/* <Scrollbars
+                className="content-warp"
+                autoHide
+                autoHideTimeout={1000}
+                autoHideDuration={200}
+                universal
+              >
+                
+              </Scrollbars> */}
             </Suspense>
           </ErrorBoundary>
         </div>
