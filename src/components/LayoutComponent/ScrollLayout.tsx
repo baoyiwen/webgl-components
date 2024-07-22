@@ -32,7 +32,7 @@ export class ScrollLayout extends ResizableComponent<
 > {
   contentRef: RefObject<HTMLDivElement>;
   private momentumAnimationFrame: number | null;
-
+  private mutationObserver!: MutationObserver; // 监听内容变化
   constructor(props: ScrollLayoutProps) {
     super(props);
     this.state = {
@@ -49,12 +49,19 @@ export class ScrollLayout extends ResizableComponent<
     };
     this.contentRef = createRef();
     this.momentumAnimationFrame = null;
+    this.mutationObserver = new MutationObserver(this.updateThumbSize);
   }
 
   componentDidMount() {
     super.componentDidMount();
     this.updateThumbSize();
     window.addEventListener('resize', this.updateThumbSize);
+    if (this.contentRef.current) {
+      this.mutationObserver.observe(this.contentRef.current, {
+        childList: true,
+        subtree: true,
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -63,6 +70,7 @@ export class ScrollLayout extends ResizableComponent<
     if (this.momentumAnimationFrame !== null) {
       window.cancelAnimationFrame(this.momentumAnimationFrame);
     }
+    this.mutationObserver.disconnect();
   }
 
   updateThumbSize = () => {
@@ -145,6 +153,11 @@ export class ScrollLayout extends ResizableComponent<
 
   protected renderContent(): ReactNode {
     const { thumbHeight, thumbTop } = this.state;
+    const displayScrollbar =
+      thumbHeight < (this.containerRef.current?.clientHeight || 0)
+        ? 'none'
+        : 'block';
+    console.log('renderContent', { thumbHeight, thumbTop, displayScrollbar });
     return (
       <div className={styles['scroll-container']} ref={this.containerRef}>
         <div className={styles['scroll-content']} ref={this.contentRef}>
@@ -153,10 +166,7 @@ export class ScrollLayout extends ResizableComponent<
         <div
           className={styles['scrollbar']}
           style={{
-            display:
-              thumbHeight < (this.containerRef.current?.clientHeight || 0)
-                ? 'none'
-                : 'block',
+            display: displayScrollbar,
           }}
         >
           <div
