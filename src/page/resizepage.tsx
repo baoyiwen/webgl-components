@@ -30,7 +30,8 @@ export class ResizePage extends ResizableComponent<
   protected renderContent(): ReactNode {
     return (
       <div className="resize-root">
-        <p>width: {this.state.height}</p>
+        <p>width: {this.state.width}</p>
+        <p>height: {this.state.height}</p>
       </div>
     );
   }

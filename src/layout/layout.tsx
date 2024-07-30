@@ -130,14 +130,19 @@ export class LayoutComponent extends Component<
       return {
         key: item.key,
         title: item.title,
-        label: (
+        label: item.path ? (
           <Link
             to={item.path}
             onClick={this.LinkClick.bind(this, item)}
             className="router-link"
+            draggable={false}
           >
             {item.title ? item.title : item.label}
           </Link>
+        ) : (
+          <p className="router-link" draggable={false}>
+            {item.title ? item.title : item.label}
+          </p>
         ),
         children: item.children
           ? (this.generateMenuItems(item.children) as any[])
@@ -146,6 +151,7 @@ export class LayoutComponent extends Component<
           item.icon && IconComponent ? (
             <IconComponent
               iconType={item.icon}
+              draggable={false}
               style={{
                 fontSize: menuIconSize,
               }}
