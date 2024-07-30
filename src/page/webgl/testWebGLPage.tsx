@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import './less/testWebGLPage.less';
-import { MetaComponent, MetaComponentProps } from '../../components';
-import { TestWebGL } from '../../components';
+import { MetaComponent, MetaComponentProps, TestWebGL } from '../../components';
 
 export type testWEbGLPageProps = MetaComponentProps & {};
 export class testWEbGLPage extends MetaComponent {

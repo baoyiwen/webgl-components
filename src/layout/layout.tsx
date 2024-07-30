@@ -13,7 +13,12 @@ import { themeStyle, baseSetting } from '../settings';
 import { CurrentData, MenuItem, setCurrentData, RouteData } from '../features';
 import { RootState } from '../store';
 import { connect } from 'react-redux';
-import { ErrorBoundary, Icon, CustomIconComponentProps } from '../components';
+import {
+  ErrorBoundary,
+  Icon,
+  CustomIconComponentProps,
+  ScrollLayout,
+} from '../components';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 
 export interface LayoutProps {
@@ -125,14 +130,19 @@ export class LayoutComponent extends Component<
       return {
         key: item.key,
         title: item.title,
-        label: (
+        label: item.path ? (
           <Link
             to={item.path}
             onClick={this.LinkClick.bind(this, item)}
             className="router-link"
+            draggable={false}
           >
             {item.title ? item.title : item.label}
           </Link>
+        ) : (
+          <p className="router-link" draggable={false}>
+            {item.title ? item.title : item.label}
+          </p>
         ),
         children: item.children
           ? (this.generateMenuItems(item.children) as any[])
@@ -141,6 +151,7 @@ export class LayoutComponent extends Component<
           item.icon && IconComponent ? (
             <IconComponent
               iconType={item.icon}
+              draggable={false}
               style={{
                 fontSize: menuIconSize,
               }}
@@ -227,13 +238,7 @@ export class LayoutComponent extends Component<
         <div className={classname(['site-layout-content'])}>
           <ErrorBoundary>
             <Suspense fallback={<div>Loading......</div>}>
-              <Scrollbars
-                className="content-warp"
-                autoHide
-                autoHideTimeout={1000}
-                autoHideDuration={200}
-                universal
-              >
+              <ScrollLayout>
                 <Routes>
                   {routes
                     .filter(r => r.path)
@@ -249,7 +254,17 @@ export class LayoutComponent extends Component<
                     element={<Navigate to={currentData.currentPath} replace />}
                   ></Route>
                 </Routes>
-              </Scrollbars>
+              </ScrollLayout>
+
+              {/* <Scrollbars
+                className="content-warp"
+                autoHide
+                autoHideTimeout={1000}
+                autoHideDuration={200}
+                universal
+              >
+                
+              </Scrollbars> */}
             </Suspense>
           </ErrorBoundary>
         </div>
