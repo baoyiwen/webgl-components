@@ -9,7 +9,8 @@
     overflow: hidden; // 禁用原生滚动
     padding-right: 20px; // 为自定义滚动条腾出空间
     box-sizing: content-box;
-    transition: top 0.3s ease;
+    // transition: top 0.3s ease;
+    // scroll-behavior: smooth; 
     .scroll-warp {
       width: 100%;
       min-height: 100%;
@@ -29,7 +30,7 @@
     user-select: none;
     // 滚动条滑块
     .scroll-thumb {
-      transition: top 0.3s ease;
+      transition: none;
       position: absolute;
       right: 2px;
       width: 12px;

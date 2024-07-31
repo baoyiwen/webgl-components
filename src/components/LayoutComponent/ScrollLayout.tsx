@@ -13,7 +13,10 @@ import {
 
 import styles from './less/SrollLayout.module.less';
 
-export type ScrollLayoutProps = ResizableComponentProps & {};
+export type ScrollLayoutProps = ResizableComponentProps & {
+  accelerationFactor?: number; // 加速因子
+  maxSpeed?: number; // 最大速度
+};
 
 export type ScrollLayoutState = ResizableComponentState & {
   thumbHeight: number;
@@ -25,6 +28,9 @@ export type ScrollLayoutState = ResizableComponentState & {
   velocity: number;
   momentum: boolean;
   lastUpdateTime: number;
+  scrollCount: number; // 滚动次数
+  isAnimating: boolean; // 动画状态
+  wheeling: boolean; // 记录是否时wheel
 };
 
 export class ScrollLayout extends ResizableComponent<
@@ -50,6 +56,9 @@ export class ScrollLayout extends ResizableComponent<
       velocity: 0,
       momentum: false,
       lastUpdateTime: 0,
+      scrollCount: 0,
+      isAnimating: false,
+      wheeling: true,
     };
 
     // 绑定方法
@@ -119,31 +128,41 @@ export class ScrollLayout extends ResizableComponent<
       const velocity = boundedScrollTop - this.state.lastScrollTop;
       const currentTime = Date.now();
       const deltaTime = currentTime - this.state.lastUpdateTime;
-
-      this.contentRef.current.scrollTop = boundedScrollTop;
+      if (isWheel) {
+        this.contentRef.current.scrollTo({
+          top: boundedScrollTop,
+          behavior: 'smooth',
+        }); // .scrollTop = boundedScrollTop;
+      } else {
+        this.contentRef.current.scrollTop = boundedScrollTop;
+      }
       this.setState({
         thumbTop,
         lastScrollTop: boundedScrollTop,
         velocity: isWheel ? velocity / deltaTime : 0,
         lastUpdateTime: currentTime,
+        momentum: isWheel ? true : this.state.momentum,
+        isAnimating: isWheel ? true : this.state.isAnimating,
       });
 
-      if (
-        isWheel &&
-        Math.abs(velocity) > 0.1 &&
-        this.momentumAnimationFrame === null
-      ) {
-        this.setState({ momentum: true });
-        this.momentumAnimationFrame = window.requestAnimationFrame(
-          this.animateMomentum,
-        );
-      } else if (!isWheel) {
-        if (this.momentumAnimationFrame !== null) {
-          window.cancelAnimationFrame(this.momentumAnimationFrame);
-          this.momentumAnimationFrame = null;
-        }
-        this.setState({ momentum: false });
-      }
+      // if (
+      //   isWheel &&
+      //   Math.abs(velocity) > 0.1 &&
+      //   this.momentumAnimationFrame === null
+      // ) {
+      //   this.setState(prevState => ({
+      //     scrollCount: prevState.scrollCount + 1,
+      //   }));
+      //   this.momentumAnimationFrame = window.requestAnimationFrame(
+      //     this.animateMomentum,
+      //   );
+      // } else if (!isWheel && !this.state.isAnimating) {
+      //   if (this.momentumAnimationFrame !== null) {
+      //     window.cancelAnimationFrame(this.momentumAnimationFrame);
+      //     this.momentumAnimationFrame = null;
+      //   }
+      //   this.setState({ momentum: false, scrollCount: 0 });
+      // }
     }
   }
 
@@ -153,6 +172,7 @@ export class ScrollLayout extends ResizableComponent<
       isDragging: true,
       startY: e.clientY,
       startTop: this.state.thumbTop,
+      wheeling: false,
     });
     window.addEventListener('mousemove', this.handleMouseMove);
     window.addEventListener('mouseup', this.handleMouseUp);
@@ -173,19 +193,18 @@ export class ScrollLayout extends ResizableComponent<
         clientHeight - this.state.thumbHeight,
       );
       const newScrollTop = (newThumbTop / clientHeight) * realScrollHeight;
-
       this.handleScroll(newScrollTop);
     }
   }
 
   // 处理鼠标松开事件
   handleMouseUp() {
-    this.setState({ isDragging: false });
+    this.setState({ isDragging: false, wheeling: true });
     window.removeEventListener('mousemove', this.handleMouseMove);
     window.removeEventListener('mouseup', this.handleMouseUp);
 
     if (Math.abs(this.state.velocity) > 5) {
-      this.setState({ momentum: true });
+      this.setState({ momentum: true, isAnimating: true });
       this.momentumAnimationFrame = window.requestAnimationFrame(
         this.animateMomentum,
       );
@@ -197,24 +216,31 @@ export class ScrollLayout extends ResizableComponent<
     if (this.contentRef.current && this.state.momentum) {
       const currentTime = Date.now();
       const deltaTime = currentTime - this.state.lastUpdateTime;
+      const accelerationFactor = this.props.accelerationFactor || 1.05;
+      const maxSpeed = this.props.maxSpeed || 100;
+      const newVelocity = Math.min(
+        this.state.velocity * accelerationFactor,
+        maxSpeed,
+      );
       const newScrollTop =
-        this.contentRef.current!.scrollTop +
-        this.state.velocity * deltaTime;
+        this.contentRef.current!.scrollTop + newVelocity * deltaTime;
 
-      this.handleScroll(newScrollTop);
+      this.handleScroll(newScrollTop, false);
       this.setState({
-        velocity: this.state.velocity * 0.95,
+        velocity: newVelocity * 0.98,
         lastUpdateTime: currentTime,
       });
 
-      if (Math.abs(this.state.velocity) > 0.1) {
+      if (Math.abs(newVelocity) > 0.1) {
         this.momentumAnimationFrame = window.requestAnimationFrame(
           this.animateMomentum,
         );
       } else {
-        this.setState({ momentum: false, velocity: 0 });
+        this.setState({ momentum: false, velocity: 0, isAnimating: false });
         this.momentumAnimationFrame = null;
       }
+    } else {
+      this.setState({ isAnimating: false });
     }
   }
 
@@ -222,13 +248,21 @@ export class ScrollLayout extends ResizableComponent<
   handleWheel(event: WheelEvent) {
     event.preventDefault();
     if (this.contentRef.current) {
-      const scrollTop = this.contentRef.current!.scrollTop + event.deltaY;
+      const accelerationFactor = this.props.accelerationFactor || 1.05;
+      const maxSpeed = this.props.maxSpeed || 100;
+      const newScrollCount = this.state.scrollCount + 1;
+      const velocityMultiplier = Math.min(
+        Math.pow(accelerationFactor, newScrollCount),
+        maxSpeed,
+      );
+      const scrollTop =
+        this.contentRef.current!.scrollTop + event.deltaY * velocityMultiplier;
       this.handleScroll(scrollTop, true);
     }
   }
 
   protected renderContent(): ReactNode {
-    const { thumbHeight, thumbTop } = this.state;
+    const { thumbHeight, thumbTop, wheeling } = this.state;
     const clientHeight = this.containerRef.current?.clientHeight;
     const displayScrollbar =
       clientHeight && thumbHeight < clientHeight ? 'block' : 'none';
@@ -248,7 +282,11 @@ export class ScrollLayout extends ResizableComponent<
         >
           <div
             className={styles['scroll-thumb']}
-            style={{ height: thumbHeight, top: thumbTop }}
+            style={{
+              height: thumbHeight,
+              top: thumbTop,
+              transition: wheeling ? 'top .3s ease' : 'none',
+            }}
             onMouseDown={this.handleThumbMouseDown}
           />
         </div>
