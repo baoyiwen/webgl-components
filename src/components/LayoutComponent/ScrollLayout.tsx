@@ -1,9 +1,7 @@
 import {
-  CSSProperties,
   ReactNode,
   createRef,
   RefObject,
-  Component,
 } from 'react';
 import {
   ResizableComponent,

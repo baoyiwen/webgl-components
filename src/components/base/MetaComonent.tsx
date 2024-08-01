@@ -3,7 +3,6 @@ import {
   ComponentType,
   CSSProperties,
   HTMLAttributes,
-  ReactNode,
 } from 'react';
 import { PageMetaType } from '../../types';
 
