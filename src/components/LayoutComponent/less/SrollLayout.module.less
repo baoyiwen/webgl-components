@@ -3,17 +3,20 @@
   width: 100%;
   height: 100%;
   overflow: hidden; // 隐藏原生滚动条
+  transition: none;
   .scroll-content {
     width: 100%;
     height: 100%;
     overflow: hidden; // 禁用原生滚动
     padding-right: 20px; // 为自定义滚动条腾出空间
     box-sizing: content-box;
+    transition: none;
     // transition: top 0.3s ease;
     // scroll-behavior: smooth; 
     .scroll-warp {
       width: 100%;
-      min-height: 100%;
+      height: 100%;
+      transition: none;
     }
   }
 
