@@ -1,4 +1,4 @@
-import { Component, createRef, RefObject } from 'react';
+import { createRef, RefObject } from 'react';
 import {
   BoxGeometry,
   Mesh,

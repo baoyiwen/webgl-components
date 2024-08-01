@@ -1,13 +1,7 @@
 import { Component, ReactNode, Suspense, lazy, ComponentType } from 'react';
 import classname from 'classnames';
 import './layout.less';
-import {
-  Link,
-  Navigate,
-  Route,
-  Routes,
-  BrowserRouter as Router,
-} from 'react-router-dom';
+import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import { themeStyle, baseSetting } from '../settings';
 import { CurrentData, MenuItem, setCurrentData, RouteData } from '../features';
@@ -19,7 +13,7 @@ import {
   CustomIconComponentProps,
   ScrollLayout,
 } from '../components';
-import { Scrollbars } from 'react-custom-scrollbars-2';
+// import { Scrollbars } from 'react-custom-scrollbars-2';
 
 export interface LayoutProps {
   menuItems: MenuItem[];
