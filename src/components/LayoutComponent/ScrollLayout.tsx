@@ -63,7 +63,7 @@ export class ScrollLayout extends ResizableComponent<
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.animateMomentum = this.animateMomentum.bind(this);
     this.handleWheel = this.handleWheel.bind(this);
-    // this.animationStop = this.animationStop.bind(this);
+    this.animationStop = this.animationStop.bind(this);
 
     this.contentRef = createRef();
     this.contentWarpRef = createRef();
@@ -74,6 +74,7 @@ export class ScrollLayout extends ResizableComponent<
   componentDidMount() {
     super.componentDidMount();
     this.updateThumbSize(); // 初次加载时计算滑块高度
+    window.addEventListener('transitionend', this.animationStop)
     if (this.contentRef.current) {
       this.mutationObserver.observe(this.contentRef.current, {
         childList: true,
@@ -97,9 +98,15 @@ export class ScrollLayout extends ResizableComponent<
     });
   }
 
+  animationStop() {
+    requestAnimationFrame(() => {
+      this.updateThumbSize();
+    });
+  }
+
   componentWillUnmount() {
     super.componentWillUnmount();
-    // window.removeEventListener('transitionend', this.animationStop);
+    window.removeEventListener('transitionend', this.animationStop);
     if (this.momentumAnimationFrame !== null) {
       window.cancelAnimationFrame(this.momentumAnimationFrame);
     }
