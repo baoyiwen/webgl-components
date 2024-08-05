@@ -11,7 +11,7 @@ import {
   Scene,
   DirectionalLight,
 } from 'three';
-import { Viewer, createWorldTerrainAsync, Ion } from 'cesium';
+import { Viewer, Ion } from 'cesium';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import 'cesium/Build/Cesium/Widgets/widgets.css';
@@ -37,7 +37,7 @@ export class CesiumBaseComponent extends ResizableComponent<
   private threeContainerRef: RefObject<HTMLDivElement>;
   private viewerRef: Viewer | null;
   private rendererRef: WebGLRenderer | null;
-  private sceneRef: Scene | null;
+  // private sceneRef: Scene | null;
   private cameraRef: PerspectiveCamera | null;
 
   constructor(props: CesiumBaseComponentProps) {
@@ -47,7 +47,7 @@ export class CesiumBaseComponent extends ResizableComponent<
     this.threeContainerRef = createRef();
     this.viewerRef = null;
     this.rendererRef = null;
-    this.sceneRef = null;
+    // this.sceneRef = null;
     this.cameraRef = null;
   }
 
@@ -117,7 +117,7 @@ export class CesiumBaseComponent extends ResizableComponent<
 
     animate();
 
-    this.sceneRef = scene;
+    // this.sceneRef = scene;
     this.cameraRef = camera;
     this.rendererRef = renderer;
   }

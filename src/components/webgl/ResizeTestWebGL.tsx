@@ -26,12 +26,12 @@ export class ResizeTestWebGL extends ResizableComponent<
   private renderer!: WebGLRenderer;
   private cube!: Mesh;
   private cleanup?: () => void;
-  private isRead: boolean;
+  // private isRead: boolean;
 
   constructor(props: ResizeTestWebGLProps) {
     super(props);
     this.containerTestRef = createRef();
-    this.isRead = false;
+    // this.isRead = false;
   }
 
   componentDidMount(): void {
@@ -87,7 +87,7 @@ export class ResizeTestWebGL extends ResizableComponent<
       container.removeChild(this.renderer.domElement);
     };
 
-    this.isRead = true;
+    // this.isRead = true;
   }
 
   resizeWebGL() {
@@ -106,7 +106,7 @@ export class ResizeTestWebGL extends ResizableComponent<
     if (this.cleanup) {
       this.cleanup();
     }
-    this.isRead = false;
+    // this.isRead = false;
   }
 
   renderContent() {

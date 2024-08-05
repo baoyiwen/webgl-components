@@ -1,12 +1,10 @@
 import { createRef, ReactNode, RefObject } from 'react';
 import {
-  MetaComonentState,
   MetaComponent,
   MetaComponentProps,
   CesiumBaseComponent,
   CesiumBaseComponentProps,
 } from '../../../components';
-import { Viewer, Ion, CesiumTerrainProvider, IonResource } from 'cesium';
 
 import './less/cesiumDemoPage.less';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
