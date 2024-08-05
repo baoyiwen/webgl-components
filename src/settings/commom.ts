@@ -38,9 +38,9 @@ export const SubmenuMeta: SubmenuMetaMap = {
         path: '',
         icon: 'CodeSandboxOutlined'
     },
-    webglDemo: {
-        label: 'webglDemo',
-        title: 'WebGL 实例',
+    map: {
+        label: 'map demo',
+        title: 'Map 实例',
         path: '',
         icon: 'CodeSandboxOutlined'
     }

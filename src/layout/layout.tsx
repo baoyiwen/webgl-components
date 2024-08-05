@@ -249,6 +249,21 @@ export class LayoutComponent extends Component<
                   ></Route>
                 </Routes>
               </ScrollLayout>
+              {/* <Routes>
+                  {routes
+                    .filter(r => r.path)
+                    .map(route => (
+                      <Route
+                        key={route.key}
+                        path={route.path}
+                        element={loadComponent(route.componentPath)}
+                      ></Route>
+                    ))}
+                  <Route
+                    path="*"
+                    element={<Navigate to={currentData.currentPath} replace />}
+                  ></Route>
+                </Routes> */}
 
               {/* <Scrollbars
                 className="content-warp"
