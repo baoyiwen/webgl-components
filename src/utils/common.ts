@@ -92,3 +92,47 @@ export const treeNodeBuild = (
   });
   return root.children || [];
 };
+
+/**
+ * 获取当前浏览器路由并拆分成路由组
+ * @returns {string[]} 路由组数组，每个元素都是 "/xxxx" 形式
+ */
+export const getCurrentRouteSegments = (): string[] => {
+  const path = window.location.pathname;
+  // 按斜杠分割路径，保留斜杠前缀
+  return path
+    .split('/')
+    .filter(segment => segment !== '')
+    .map(segment => `/${segment}`);
+};
+
+/**
+ * 根据当前路由获取默认选中的菜单项
+ * @param {TreeNodeProp[]} allRoutes - 所有路由信息
+ * @param {string[]} currentRouteSegments - 当前路由组
+ * @returns {string} 默认选中的菜单项的路径
+ */
+export const getDefaultSelectedMenuItem = (
+  allRoutes: TreeNodeProp[],
+  currentRouteSegments: string[]
+): TreeNodeProp | null => {
+  const lastSegment = currentRouteSegments[currentRouteSegments.length - 1];
+  
+  const findMatchingRoute = (routes: TreeNodeProp[]): TreeNodeProp | null => {
+    for (const route of routes) {
+      if (route.meta.path === lastSegment) {
+        return route;
+      }
+      if (route.children && route.children.length > 0) {
+        const childResult = findMatchingRoute(route.children);
+        if (childResult) {
+          return childResult;
+        }
+      }
+    }
+    return null;
+  };
+
+  return findMatchingRoute(allRoutes);
+};
+

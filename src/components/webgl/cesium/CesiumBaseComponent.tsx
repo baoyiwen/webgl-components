@@ -8,11 +8,11 @@ import {
 import {
   PerspectiveCamera,
   WebGLRenderer,
-  Scene,
-  DirectionalLight,
+  // Scene,
+  // DirectionalLight,
 } from 'three';
 import { Viewer, Ion } from 'cesium';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import 'cesium/Build/Cesium/Widgets/widgets.css';
 import 'cesium/Build/Cesium/Widgets/InfoBox/InfoBoxDescription.css';
@@ -34,7 +34,6 @@ export class CesiumBaseComponent extends ResizableComponent<
   CesiumBaseComponentState
 > {
   private cesiumContainerRef: RefObject<HTMLDivElement>;
-  private threeContainerRef: RefObject<HTMLDivElement>;
   private viewerRef: Viewer | null;
   private rendererRef: WebGLRenderer | null;
   // private sceneRef: Scene | null;
@@ -44,7 +43,6 @@ export class CesiumBaseComponent extends ResizableComponent<
     super(props);
 
     this.cesiumContainerRef = createRef();
-    this.threeContainerRef = createRef();
     this.viewerRef = null;
     this.rendererRef = null;
     // this.sceneRef = null;
@@ -55,7 +53,6 @@ export class CesiumBaseComponent extends ResizableComponent<
     super.componentDidMount();
     Ion.defaultAccessToken = this.props.cesiumToken;
     this.initCesium();
-    this.initThree();
     // window.addEventListener('resize', this.handleResize);
   }
 
@@ -69,57 +66,17 @@ export class CesiumBaseComponent extends ResizableComponent<
 
   initCesium(): void {
     if (!this.cesiumContainerRef.current) return;
-
-    // (window as any).CESIUM_BASE_URL = '/';
-    // const terrainProvider = await createWorldTerrainAsync();
     this.viewerRef = new Viewer(this.cesiumContainerRef.current, {
       infoBox: false,
+      geocoder: false, // 隐藏查找控件。
+      homeButton: false, // 隐藏视角返回初始位置按钮
+      sceneModePicker: false, // 隐藏视角模式3D, 2D, CV,
+      baseLayerPicker: false, // 隐藏图层选择
+      navigationHelpButton: false, // 隐藏帮助按钮
+      animation: false, // 隐藏动画控件
+      timeline: false, // 隐藏时间轴
+      fullscreenButton: false, // 隐藏全屏
     });
-  }
-
-  initThree(): void {
-    if (!this.threeContainerRef.current) return;
-
-    const scene = new Scene();
-    const camera = new PerspectiveCamera(
-      75,
-      this.state.width / this.state.height,
-      0.1,
-      1000,
-    );
-
-    const renderer = new WebGLRenderer({ alpha: true });
-    renderer.setSize(this.state.width, this.state.height);
-    this.threeContainerRef.current.appendChild(renderer.domElement);
-
-    const light = new DirectionalLight(0xffffff, 1);
-    light.position.set(0, 1, 1).normalize();
-    scene.add(light);
-
-    if (this.props.models) {
-      this.props.models.forEach(({ url, position, scale }) => {
-        const loader = new GLTFLoader();
-        loader.load(url, gltf => {
-          const model = gltf.scene;
-          model.position.set(...position);
-          model.scale.setScalar(scale || 1);
-          scene.add(model);
-        });
-      });
-    }
-
-    camera.position.z = 5;
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
-    // this.sceneRef = scene;
-    this.cameraRef = camera;
-    this.rendererRef = renderer;
   }
 
   resizeThree(): void {

@@ -5,7 +5,6 @@ import './App.less';
 // import { Scrollbars } from 'react-custom-scrollbars-2';
 
 export type AppProps = {};
-
 export class App extends Component<AppProps> {
   constructor(props: AppProps) {
     super(props);

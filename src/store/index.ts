@@ -1,9 +1,11 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { testCounterReducer, MenuReducer } from '../features';
+import { testCounterReducer, MenuReducer, RouterReducer } from '../features';
+
 
 const rootReducer = combineReducers({
   testCounter: testCounterReducer,
-  menuContent: MenuReducer
+  menuContent: MenuReducer,
+  routerContent: RouterReducer,
 });
 
 const store = configureStore({

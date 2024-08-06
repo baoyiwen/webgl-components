@@ -7,25 +7,17 @@ import './index.css';
 import { ConfigProvider } from 'antd';
 import { global_theme } from './theme';
 import { fetchMenuItems } from './thunk';
+import { getCurrentRouteSegments } from './utils/common'
+import { setLocations } from './features';
 
 // // 自动生成菜单树
 
 const Root: React.FC = () => {
   const dispatch = useDispatch();
   useEffect(() => {
+    const currentRoutes = getCurrentRouteSegments();
+    dispatch(setLocations(currentRoutes));
     dispatch(fetchMenuItems() as any);
-    // const loadAndSetPages = async () => {
-    //   // const pages = await loadPage();
-    //   // // 生成菜单数据并存入 Redux Store
-    //   // generateMenuDataByStore(pages);
-    //   // // 设置默认页面路径
-    //   // settingDefaultPagePath(pages);
-    //   // // 设置路由数据
-    //   // setRoutesByStore(pages);
-
-    // };
-
-    //  loadAndSetPages();
   }, [dispatch]);
 
   return <App />;

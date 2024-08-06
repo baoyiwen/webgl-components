@@ -1,7 +1,12 @@
 import { PageMeta } from './loadPage';
 import { setCurrentData, setMenuItems, MenuItem, setRoutes } from '../features';
 import { AppDispatch } from '../store';
-import { treeNodeBuild, TreeNodeProps } from './common';
+import {
+  treeNodeBuild,
+  TreeNodeProps,
+  // getDefaultSelectedMenuItem,
+  // getCurrentRouteSegments,
+} from './common';
 
 // 自动生成菜单树
 export const generateMenuTree = (
@@ -43,6 +48,14 @@ export const settingDefaultPagePath = (
   pages: PageMeta[],
   dispatch: AppDispatch,
 ) => {
+  // let currentRoutes: string[] = [];
+  // 使用 locations 作为默认页面的判定基础
+  // const { locations } = store.getState().routerContent;
+  // if (locations && locations.length > 0) {
+  //   currentRoutes = locations;
+  // }
+  // const treeData = treeNodeBuild(pages, ['..', 'page']);
+  // const currentRoute = getDefaultSelectedMenuItem(treeData, currentRoutes);
   const defaultPage = pages.find(page => page.meta.default);
   if (defaultPage) {
     const defaultMeta = defaultPage.meta;

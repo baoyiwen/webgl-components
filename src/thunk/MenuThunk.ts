@@ -6,12 +6,17 @@ import {
   setRoutesByStore,
   settingDefaultPagePath,
 } from '../utils/generateMenuTree';
+// import { getCurrentRouteSegments } from '../utils/common';
 
 export const fetchMenuItems = createAsyncThunk<void, void, any>(
   'menu/fetchMenuItems',
   async (_, { dispatch }) => {
     dispatch(setLoading(true)); // 开始加载
     const pages = await loadPage();
+   //  const currentRoutes = getCurrentRouteSegments();
+
+    // console.error(currentRoutes)
+    
     // 生成菜单数据并存入 Redux Store
     generateMenuDataByStore(pages, dispatch<any>);
     // 设置默认页面路径
