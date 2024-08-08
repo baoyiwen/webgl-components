@@ -7,16 +7,16 @@ import './index.css';
 import { ConfigProvider } from 'antd';
 import { global_theme } from './theme';
 import { fetchMenuItems } from './thunk';
-import { getCurrentRouteSegments } from './utils/common'
 import { setLocations } from './features';
+import { getCurrentRouteSegments } from './utils/common';
 
 // // 自动生成菜单树
 
 const Root: React.FC = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    const currentRoutes = getCurrentRouteSegments();
-    dispatch(setLocations(currentRoutes));
+    const segments = getCurrentRouteSegments();
+    dispatch(setLocations(segments));
     dispatch(fetchMenuItems() as any);
   }, [dispatch]);
 

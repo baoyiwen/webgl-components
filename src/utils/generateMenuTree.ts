@@ -1,7 +1,8 @@
 import { PageMeta } from './loadPage';
 import { setCurrentData, setMenuItems, MenuItem, setRoutes } from '../features';
-import { AppDispatch } from '../store';
+import store, { AppDispatch } from '../store';
 import {
+  getDefaultSelectedMenuItem,
   treeNodeBuild,
   TreeNodeProps,
   // getDefaultSelectedMenuItem,
@@ -48,15 +49,33 @@ export const settingDefaultPagePath = (
   pages: PageMeta[],
   dispatch: AppDispatch,
 ) => {
-  // let currentRoutes: string[] = [];
+  let currentRoutes: string[] = [];
   // 使用 locations 作为默认页面的判定基础
-  // const { locations } = store.getState().routerContent;
-  // if (locations && locations.length > 0) {
-  //   currentRoutes = locations;
-  // }
-  // const treeData = treeNodeBuild(pages, ['..', 'page']);
-  // const currentRoute = getDefaultSelectedMenuItem(treeData, currentRoutes);
+  const { locations } = store.getState().routerContent;
+  if (locations && locations.length > 0) {
+    currentRoutes = locations;
+  }
+  const treeData = treeNodeBuild(pages, ['..', 'page']);
+  const currentRoute = getDefaultSelectedMenuItem(treeData, currentRoutes);
   const defaultPage = pages.find(page => page.meta.default);
+  if (currentRoute) {
+    const meta = currentRoute.meta;
+    dispatch(
+      setCurrentData({
+        currentMenu: {
+          key: meta.label,
+          path: meta.path,
+          label: meta.label,
+          data: meta,
+          icon: meta.icon,
+          title: meta.title,
+        },
+        currentKey: meta.path,
+        currentPath: meta.path,
+      }),
+    );
+    return;
+  }
   if (defaultPage) {
     const defaultMeta = defaultPage.meta;
     dispatch(

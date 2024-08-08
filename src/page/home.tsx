@@ -8,8 +8,7 @@ export class Home extends MetaComponent {
   static meta = {
     title: '测试页面',
     label: 'TestPage',
-    path: '/home',
-    default: true,
+    path: '/',
     icon: 'SmileOutlined',
   };
   constructor(props: HomeProps) {
