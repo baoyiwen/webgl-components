@@ -69,12 +69,6 @@ export class LayoutComponent extends Component<
       // }
     }
   }
-  // componentDidUpdate(prevProps: LayoutProps) {
-  //   // 当 menuItems 数据加载完成后预加载图标
-  //   if (!this.props.isLoading && prevProps.isLoading) {
-  //     this.preloadIcon();
-  //   }
-  // }
 
   // 异步预加载图标
   private async preloadIcon() {
