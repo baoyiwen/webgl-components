@@ -30,27 +30,13 @@ export class CesiumDemoPage extends MetaComponent<CesiumDemoPageProps> {
         // { url: 'path/to/model1.glb', position: [0, 0, 0], scale: 1 },
         // { url: 'path/to/model2.glb', position: [10, 10, 0], scale: 0.5 },
       ],
+      center: [114.180807, 22.295909, 10000],
     };
   }
 
-  componentDidMount(): void {
-    // Ion.defaultAccessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMjI1MWJlMy1hYWI0LTQzNGUtYjBkYS1jNWUyMWZiZmM4ODEiLCJpZCI6MjMyMTc3LCJpYXQiOjE3MjI1Njc3MDV9.yVzHN_QkPMGT2bSaJ65edQZ1vS6lA6JP-o81OKK5nME`;
-    // if (this.CesiumRoot.current) {
-    //   this.Viewer = new Viewer(this.CesiumRoot.current, {
-    //     infoBox: false,
-    //     // terrainProvider: new CesiumTerrainProvider({
-    //     //   requestWaterMask: true, // 可选参数，用于请求水域掩膜数据
-    //     //   requestVertexNormals: true, // 可选参数，用于请求顶点法线数据
-    //     // }),
-    //   });
-    // }
-  }
+  componentDidMount(): void {}
 
-  componentWillUnmount(): void {
-    // if (this.Viewer) {
-    //   this.Viewer.destroy();
-    // }
-  }
+  componentWillUnmount(): void {}
 
   render(): ReactNode {
     return (

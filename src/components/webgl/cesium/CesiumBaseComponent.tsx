@@ -25,6 +25,7 @@ export type CesiumBaseComponentProps = ResizableComponentProps & {
     scale?: number;
   }[];
   cesiumToken: string;
+  center: [number, number, number];
 };
 
 export type CesiumBaseComponentState = ResizableComponentState & {};
@@ -79,26 +80,7 @@ export class CesiumBaseComponent extends ResizableComponent<
       // creditContainer:"credit",
     });
     this.viewerRef.scene.debugShowFramesPerSecond = true;
-    // this.startRandomJump();
-    this.flyTo([114.180807, 22.295909, 10000]);
-    // const destination = Cartesian3.fromDegrees(114.180807, 22.295909, 10000);
-    // this.viewerRef.camera.flyTo({ destination: destination });
-    // 添加随机跳转位置的方法
-    // this.startRandomJump();
-    // const redBox = this.viewerRef.entities.add({
-    //   name: 'test demo',
-    //   position: Cartesian3.fromDegrees(-107.0, 40.0, 300000.0),
-    //   box: {
-    //     dimensions: new Cartesian3(400000.0, 300000.0, 500000.0),
-    //     material: Color.RED.withAlpha(0.5),
-    //     outline: true,
-    //     outlineColor: Color.BLACK,
-    //   },
-    // });
-
-    // setTimeout(() => {
-    //   this.viewerRef && this.viewerRef.zoomTo(this.viewerRef.entities);
-    // }, 20000);
+    this.flyTo(this.props.center);
   }
 
   startRandomJump() {
@@ -136,17 +118,8 @@ export class CesiumBaseComponent extends ResizableComponent<
     });
   }
 
-  resizeThree(): void {
-    if (!this.rendererRef || !this.cameraRef) return;
-
-    this.rendererRef.setSize(this.state.width, this.state.height);
-    this.cameraRef.aspect = this.state.width / this.state.height;
-    this.cameraRef.updateProjectionMatrix();
-  }
-
   handleResize(width: number, height: number): void {
     super.handleResize(width, height);
-    this.resizeThree();
   }
 
   protected renderContent(): ReactNode {
