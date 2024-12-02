@@ -12,6 +12,7 @@ export const fetchMenuItems = createAsyncThunk<void, void, any>(
   async (_, { dispatch }) => {
     dispatch(setLoading(true)); // 开始加载
     const pages = await loadPage();
+    
     // 生成菜单数据并存入 Redux Store
     generateMenuDataByStore(pages, dispatch<any>);
     // 设置默认页面路径

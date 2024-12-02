@@ -1,3 +1,3 @@
-export * from './menu/menuSlice'
-
-export * from './test/TestCounterSlice'
+export * from './menu/menuSlice';
+export * from './router/routerSlice';
+export * from './test/TestCounterSlice';

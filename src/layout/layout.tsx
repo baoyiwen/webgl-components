@@ -1,7 +1,8 @@
 import { Component, ReactNode, Suspense, lazy, ComponentType } from 'react';
 import classname from 'classnames';
 import './layout.less';
-import { Link, Navigate, Route, Routes } from 'react-router-dom';
+// Navigate,
+import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import { themeStyle, baseSetting } from '../settings';
 import { CurrentData, MenuItem, setCurrentData, RouteData } from '../features';
@@ -14,6 +15,13 @@ import {
   ScrollLayout,
 } from '../components';
 // import { Scrollbars } from 'react-custom-scrollbars-2';
+// 在组件外部创建一个函数来获取navigate
+let navigateFunction: (path: string) => void;
+
+export function NavigateSetter() {
+  navigateFunction = useNavigate();
+  return null;
+}
 
 export interface LayoutProps {
   menuItems: MenuItem[];
@@ -43,11 +51,22 @@ export class LayoutComponent extends Component<
     // 组件挂载后预加载图标
     this.preloadIcon();
   }
-
   componentDidUpdate(prevProps: LayoutProps) {
     // 当 menuItems 数据加载完成后预加载图标
     if (!this.props.isLoading && prevProps.isLoading) {
       this.preloadIcon();
+
+      // 路由渲染完成后进行路由跳转
+      // const { currentData } = this.props;
+      // if (currentData && currentData.currentPath) {
+      //   // 使用 setTimeout 确保在下一个事件循环中执行，给予路由有足够时间完成渲染
+      //   setTimeout(() => {
+      //     // 使用 React Router 的 navigate 函数进行路由跳转
+      //     if (navigateFunction) {
+      //       navigateFunction(currentData.currentPath);
+      //     }
+      //   }, 0);
+      // }
     }
   }
 
@@ -102,6 +121,7 @@ export class LayoutComponent extends Component<
   render(): ReactNode {
     return (
       <div className={classname(['root-layout-LayoutComponent'])}>
+        {/* <NavigateSetter /> */}
         <Layout className="root-layout-warp">
           {this.renderHeader()}
           <Layout className={classname(['root-layout'])}>
@@ -219,7 +239,8 @@ export class LayoutComponent extends Component<
   }
 
   renderContent() {
-    const { routes, currentData } = this.props;
+    // currentData
+    const { routes } = this.props;
     const { Content } = Layout;
     const modules = import.meta.glob('../page/**/*.tsx');
     const loadComponent = (componentPath: string) => {
@@ -243,12 +264,35 @@ export class LayoutComponent extends Component<
                         element={loadComponent(route.componentPath)}
                       ></Route>
                     ))}
+                  {/* <Route
+                    path="*"
+                    element={<Navigate to={currentData.currentPath} replace />}
+                  /> */}
+                  <Route
+                    path="*"
+                    element={
+                      <div>
+                        <h1>404</h1>
+                      </div>
+                    }
+                  />
+                </Routes>
+              </ScrollLayout>
+              {/* <Routes>
+                  {routes
+                    .filter(r => r.path)
+                    .map(route => (
+                      <Route
+                        key={route.key}
+                        path={route.path}
+                        element={loadComponent(route.componentPath)}
+                      ></Route>
+                    ))}
                   <Route
                     path="*"
                     element={<Navigate to={currentData.currentPath} replace />}
                   ></Route>
-                </Routes>
-              </ScrollLayout>
+                </Routes> */}
 
               {/* <Scrollbars
                 className="content-warp"

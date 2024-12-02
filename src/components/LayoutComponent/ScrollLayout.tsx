@@ -1,8 +1,4 @@
-import {
-  ReactNode,
-  createRef,
-  RefObject,
-} from 'react';
+import { ReactNode, createRef, RefObject } from 'react';
 import {
   ResizableComponent,
   ResizableComponentProps,
@@ -67,6 +63,7 @@ export class ScrollLayout extends ResizableComponent<
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.animateMomentum = this.animateMomentum.bind(this);
     this.handleWheel = this.handleWheel.bind(this);
+    this.animationStop = this.animationStop.bind(this);
 
     this.contentRef = createRef();
     this.contentWarpRef = createRef();
@@ -77,14 +74,12 @@ export class ScrollLayout extends ResizableComponent<
   componentDidMount() {
     super.componentDidMount();
     this.updateThumbSize(); // 初次加载时计算滑块高度
-    window.addEventListener('resize', this.updateThumbSize); // 监听窗口大小变化
+    window.addEventListener('transitionend', this.animationStop)
     if (this.contentRef.current) {
-      // 监听内容变化
       this.mutationObserver.observe(this.contentRef.current, {
         childList: true,
         subtree: true,
       });
-      // 监听滚轮事件
       this.contentRef.current.addEventListener('wheel', this.handleWheel);
     }
 
@@ -96,9 +91,22 @@ export class ScrollLayout extends ResizableComponent<
     }
   }
 
+  handleResize(width: number, height: number): void {
+    super.handleResize(width, height);
+    requestAnimationFrame(() => {
+      this.updateThumbSize();
+    });
+  }
+
+  animationStop() {
+    requestAnimationFrame(() => {
+      this.updateThumbSize();
+    });
+  }
+
   componentWillUnmount() {
     super.componentWillUnmount();
-    window.removeEventListener('resize', this.updateThumbSize);
+    window.removeEventListener('transitionend', this.animationStop);
     if (this.momentumAnimationFrame !== null) {
       window.cancelAnimationFrame(this.momentumAnimationFrame);
     }
@@ -108,9 +116,9 @@ export class ScrollLayout extends ResizableComponent<
   // 计算滑块高度
   updateThumbSize() {
     if (this.contentRef.current && this.contentWarpRef.current) {
-      const { clientHeight } = this.contentRef.current;
+      const { height } = this.state;
       const { scrollHeight: realScrollHeight } = this.contentWarpRef.current;
-      const thumbHeight = (clientHeight / realScrollHeight) * clientHeight;
+      const thumbHeight = (height / realScrollHeight) * height;
       this.setState({ thumbHeight });
     }
   }
@@ -118,11 +126,11 @@ export class ScrollLayout extends ResizableComponent<
   // 处理滚动事件
   handleScroll(scrollTop: number, isWheel: boolean = false) {
     if (this.contentRef.current && this.contentWarpRef.current) {
-      const { clientHeight } = this.contentRef.current;
+      const { height } = this.state;
       const { scrollHeight: realScrollHeight } = this.contentWarpRef.current;
-      const maxScrollTop = realScrollHeight - clientHeight;
+      const maxScrollTop = realScrollHeight - height;
       const boundedScrollTop = Math.max(0, Math.min(scrollTop, maxScrollTop));
-      const thumbTop = (boundedScrollTop / realScrollHeight) * clientHeight;
+      const thumbTop = (boundedScrollTop / realScrollHeight) * height;
       const velocity = boundedScrollTop - this.state.lastScrollTop;
       const currentTime = Date.now();
       const deltaTime = currentTime - this.state.lastUpdateTime;
@@ -183,14 +191,14 @@ export class ScrollLayout extends ResizableComponent<
       this.contentRef.current &&
       this.contentWarpRef.current
     ) {
+      const { height } = this.state;
       const deltaY = e.clientY - this.state.startY;
-      const { clientHeight } = this.contentRef.current;
       const { scrollHeight: realScrollHeight } = this.contentWarpRef.current;
       const newThumbTop = Math.min(
         Math.max(this.state.startTop + deltaY, 0),
-        clientHeight - this.state.thumbHeight,
+        height - this.state.thumbHeight,
       );
-      const newScrollTop = (newThumbTop / clientHeight) * realScrollHeight;
+      const newScrollTop = (newThumbTop / height) * realScrollHeight;
       this.handleScroll(newScrollTop);
     }
   }
@@ -264,7 +272,6 @@ export class ScrollLayout extends ResizableComponent<
     const clientHeight = this.containerRef.current?.clientHeight;
     const displayScrollbar =
       clientHeight && thumbHeight < clientHeight ? 'block' : 'none';
-    // console.log(clientHeight, thumbHeight, displayScrollbar);
     return (
       <div className={styles['scroll-container']} ref={this.containerRef}>
         <div className={styles['scroll-content']} ref={this.contentRef}>
