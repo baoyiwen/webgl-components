@@ -25,7 +25,7 @@ export class CesiumDemoPage extends MetaComponent<CesiumDemoPageProps> {
     super(props);
     this.CesiumRoot = createRef();
     this.CesiumData = {
-      cesiumToken: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMjI1MWJlMy1hYWI0LTQzNGUtYjBkYS1jNWUyMWZiZmM4ODEiLCJpZCI6MjMyMTc3LCJpYXQiOjE3MjI1Njc3MDV9.yVzHN_QkPMGT2bSaJ65edQZ1vS6lA6JP-o81OKK5nME`,
+      cesiumToken: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0NzFhYjc5My02YjcyLTRiODYtYTNmZS02ZjcxMWJkMjNiMTMiLCJpZCI6MjMyMTc3LCJpYXQiOjE3Mzg4MDgxMjB9.HLg6mO34PUne2nzscnhtJK7gnzbpUmsqbjU6NKjyBME`,
       models: [
         // { url: 'path/to/model1.glb', position: [0, 0, 0], scale: 1 },
         // { url: 'path/to/model2.glb', position: [10, 10, 0], scale: 0.5 },
